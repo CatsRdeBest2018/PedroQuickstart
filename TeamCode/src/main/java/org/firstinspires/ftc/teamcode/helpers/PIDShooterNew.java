@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 public class PIDShooterNew {
 
     // PID gains
-    private double kP, kI, kD;
+    private double kP, kI, kD, kF;
     private double currentRPM = 0;
 
     // Motor/encoder geometry
@@ -30,21 +30,22 @@ public class PIDShooterNew {
     // --- Constructors ---
 
     public PIDShooterNew(double ticksPerRev) {
-        this(ticksPerRev, 0, 0, 0);
+        this(ticksPerRev, 0, 0, 0, 0);
     }
 
-    public PIDShooterNew(double ticksPerRev, double kP, double kI, double kD) {
+    public PIDShooterNew(double ticksPerRev, double kP, double kI, double kD, double kF) {
         this.ticksPerRev = ticksPerRev;
-        setConsts(kP, kI, kD);
+        setConsts(kP, kI, kD, kF);
         reset(0);
     }
 
     // --- Config ---
 
-    public void setConsts(double kP, double kI, double kD) {
+    public void setConsts(double kP, double kI, double kD, double kF) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        this.kF = kF;
     }
 
     /** Reset PID state and lock RPM calculation to current encoder ticks. */
@@ -123,7 +124,7 @@ public class PIDShooterNew {
         lastError = error;
 
         // PID output
-        double output = kP * error + kI * integralSum + kD * derivative;
+        double output = kF * targetRPM + kP * error + kI * integralSum + kD * derivative;
 
         return Range.clip(output, -1, 1);
     }
