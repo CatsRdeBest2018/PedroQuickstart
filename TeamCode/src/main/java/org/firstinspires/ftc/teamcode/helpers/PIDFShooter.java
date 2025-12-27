@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.helpers;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-public class PIDShooterNew {
+public class PIDFShooter {
 
     // PID gains
     private double kP, kI, kD, kF;
@@ -23,17 +23,18 @@ public class PIDShooterNew {
     private double lastTicks = 0;
     private boolean firstSample = true;
 
-    private final ElapsedTime timer = new ElapsedTime();
+    private final ElapsedTime PIDtimer = new ElapsedTime();
+    private final ElapsedTime RPMtimer = new ElapsedTime();
 
     private static final double maxIntegral = 2000;
 
     // --- Constructors ---
 
-    public PIDShooterNew(double ticksPerRev) {
+    public PIDFShooter(double ticksPerRev) {
         this(ticksPerRev, 0, 0, 0, 0);
     }
 
-    public PIDShooterNew(double ticksPerRev, double kP, double kI, double kD, double kF) {
+    public PIDFShooter(double ticksPerRev, double kP, double kI, double kD, double kF) {
         this.ticksPerRev = ticksPerRev;
         setConsts(kP, kI, kD, kF);
         reset(0);
@@ -57,7 +58,7 @@ public class PIDShooterNew {
         firstSample = true;
 
         targetRPM = 0;
-        timer.reset();
+        RPMtimer.reset();
     }
 
     // --- Target Setting ---
@@ -79,10 +80,10 @@ public class PIDShooterNew {
     // --- RPM Calculation ---
 
     private double computeCurrentRPM(double currentTicks) {
-        double dt = timer.seconds();
+        double dt = RPMtimer.seconds();
         if (dt <= 0) dt = 1e-3;
 
-        timer.reset();
+        RPMtimer.reset();
 
         if (firstSample) {
             firstSample = false;
@@ -115,9 +116,13 @@ public class PIDShooterNew {
         double error = targetRPM - currentRPM;
 
         // integrate
-        double dt = Math.max(timer.seconds(), 1e-3);
+        double dt = Math.max(PIDtimer.seconds(), 1e-3);
         integralSum += error * dt;
         integralSum = Range.clip(integralSum, -maxIntegral, maxIntegral);
+
+        if (targetRPM == 0) {
+            integralSum = 0;
+        }
 
         // derivative
         double derivative = (error - lastError) / dt;
