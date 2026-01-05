@@ -23,8 +23,7 @@ public class PIDFShooter {
     private double lastTicks = 0;
     private boolean firstSample = true;
 
-    private final ElapsedTime PIDtimer = new ElapsedTime();
-    private final ElapsedTime RPMtimer = new ElapsedTime();
+    private final ElapsedTime timer = new ElapsedTime();
 
     private static final double maxIntegral = 2000;
 
@@ -58,7 +57,7 @@ public class PIDFShooter {
         firstSample = true;
 
         targetRPM = 0;
-        RPMtimer.reset();
+        timer.reset();
     }
 
     // --- Target Setting ---
@@ -80,10 +79,10 @@ public class PIDFShooter {
     // --- RPM Calculation ---
 
     private double computeCurrentRPM(double currentTicks) {
-        double dt = RPMtimer.seconds();
+        double dt = timer.seconds();
         if (dt <= 0) dt = 1e-3;
 
-        RPMtimer.reset();
+        timer.reset();
 
         if (firstSample) {
             firstSample = false;
@@ -116,7 +115,7 @@ public class PIDFShooter {
         double error = targetRPM - currentRPM;
 
         // integrate
-        double dt = Math.max(PIDtimer.seconds(), 1e-3);
+        double dt = Math.max(timer.seconds(), 1e-3);
         integralSum += error * dt;
         integralSum = Range.clip(integralSum, -maxIntegral, maxIntegral);
 
