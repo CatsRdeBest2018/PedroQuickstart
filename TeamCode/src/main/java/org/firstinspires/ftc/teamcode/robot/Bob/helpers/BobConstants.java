@@ -21,6 +21,14 @@ public class BobConstants {
     public static double SHOOTER_I_Z2 = 0.0006;
     public static double SHOOTER_D_Z2 = 0.0000004;
 
+    // PIDF SHOOTER VALUES
+    public static double P = 0;
+    public static double I = 0;
+    public static double D = 0;
+    public static double F = 0;
+    public static double TARGET_RPM = 0;
+
+
     // ==================== SPINDEXER ====================
     public static double TICKS_PER_REV_SPINDEXER = 8192;
     public static double SPINDEX_KP = 0.00032;
