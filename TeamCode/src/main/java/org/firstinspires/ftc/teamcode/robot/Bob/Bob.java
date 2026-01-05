@@ -281,7 +281,6 @@ public class Bob extends Meccanum implements Robot {
 
         public void update(){
             double currentTicks = (shooterLeft.getCurrentPosition() + shooterRight.getCurrentPosition()) / 2.0;
-
             if (shootPID.getTargetRPM() == RPM_OFF)shootPID.setConsts(0, 0, 0,F);
             // else if (shootPID.getTargetRPM() == RPM_ZONE1) shootPID.setConsts(SHOOTER_P_Z1, SHOOTER_I_Z1, SHOOTER_D_Z1);
           //  else if (shootPID.getTargetRPM() == RPM_ZONE2) shootPID.setConsts(SHOOTER_P_Z2, SHOOTER_I_Z2, SHOOTER_D_Z2);

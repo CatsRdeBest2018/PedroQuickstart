@@ -23,9 +23,9 @@ public class BobConstants {
 
     // PIDF SHOOTER VALUES
     public static double P = 0;
-    public static double I = 0;
-    public static double D = 0;
-    public static double F = 0;
+    public static double I = 0.1;
+    public static double D = 0.0000004;
+    public static double F = 0.0008;
     public static double TARGET_RPM = 0;
 
 
