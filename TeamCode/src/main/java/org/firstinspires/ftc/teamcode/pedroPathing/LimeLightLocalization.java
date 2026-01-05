@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,11 +17,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.util.List;
-@Disabled
 
 @Configurable
 @TeleOp
@@ -34,13 +27,13 @@ public class LimeLightLocalization extends OpMode {
     DcMotorEx motorBackRight;
     Limelight3A limelight;
 
-    private final Pose startPose = new Pose(108.939, 137.322, Math.toRadians(270));
-    private TelemetryManager telemetryM;
     private Follower follower;
-    private boolean isSeeded = false;
     GoBildaPinpointDriver pinpoint;
 
     public static int wait = 5;
+    public static double startX = 108.939;
+    public static double startY = 137.322;
+    public static double startHeadingDeg = 270;
 
     public void drawCurrent() {
         try {
@@ -77,16 +70,8 @@ public class LimeLightLocalization extends OpMode {
         limelight.pipelineSwitch(0); // Switch to pipeline number 0
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startPose);
+        follower.setStartingPose(new Pose(startX, startY, Math.toRadians(startHeadingDeg)));
         follower.update();
-
-        // 2) Keep Pinpoint aligned to the same field pose
-        pinpoint.setPosition(new Pose2D(
-                DistanceUnit.INCH,
-                startPose.getX(),
-                startPose.getY(),
-                AngleUnit.DEGREES,
-                Math.toDegrees(startPose.getHeading())));
 
     }
 
@@ -97,7 +82,7 @@ public class LimeLightLocalization extends OpMode {
         limelight.start();
     }
 
-    ElapsedTime lastRecolaized = new ElapsedTime();
+    ElapsedTime lastRelocalized = new ElapsedTime();
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -105,18 +90,6 @@ public class LimeLightLocalization extends OpMode {
     // press
     public void loop() {
         pinpoint.update();
-
-        if (!isSeeded) {
-            follower.setPose(startPose);
-            follower.update();
-            isSeeded = true;
-            return;
-        }
-
-        if (gamepad1.a) {
-            follower.setPose(startPose);
-            follower.update();
-        }
         follower.update();
 
         Pose currentPose = follower.getPose();
@@ -151,42 +124,41 @@ public class LimeLightLocalization extends OpMode {
 
         if (result != null && result.isValid()) {
             Pose3D botpose_mt2 = result.getBotpose_MT2();
-            telemetry.addData("Botpose_MT1 exists", botpose_mt2 != null);
+            telemetry.addData("Botpose_MT2 exists", botpose_mt2 != null);
 
             if (botpose_mt2 != null) {
                 double a = botpose_mt2.getPosition().x;
                 double b = botpose_mt2.getPosition().y;
                 double z = botpose_mt2.getPosition().z;
-                // Note: Pose3D might not have getHeading() method
-                telemetry.addData("MT2 Location:", "(" + a + ", " + b + ", " + z + ")");
-                // telemetry.addData("MT2 Heading:", heading);
 
-                // Note: WPIBLUE and WPIRED methods don't exist in this API
-                // Re-localize robot pose based on AprilTag field pose when detected
+                telemetry.addData("MT2 Location:", "(" + a + ", " + b + ", " + z + ")");
+
                 try {
-                    double headingDeg = Math.toDegrees(botpose_mt2.getOrientation().getPitch());
+                    Pose currentFollowerPose = follower.getPose();
+
                     double LPxInches = a * 39.3701;
                     double LPyInches = b * 39.3701;
 
                     double PxInches = LPxInches+72;
                     double PyInches = -LPyInches+72;
 
-
                     boolean clearView = true;
 
-                    if (lastRecolaized.seconds() >= wait) {
+                    if (lastRelocalized.seconds() >= wait) {
                         if (clearView) {
-                            telemetry.addData("Re-localized", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", PxInches, PyInches, headingDeg));
-                            follower.setPose(new Pose(PxInches, PyInches, follower.getHeading()));
-                            lastRecolaized.reset();
+                            telemetry.addData("Re-localized", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", PxInches, PyInches, currentFollowerPose.getHeading()));
+                            follower.setPose(new Pose(PxInches, PyInches, currentFollowerPose.getHeading()));
+                            lastRelocalized.reset();
                         } else {
-                            telemetry.addData("April Tag not in clear view", String.format("wait=%.2f, x=%.2f in, y=%.2f in, h=%.1f deg", lastRecolaized.seconds(), PxInches, PyInches, headingDeg));
+                            telemetry.addData("April Tag not in clear view", String.format("wait=%.2f, x=%.2f in, y=%.2f in, h=%.1f deg", lastRelocalized.seconds(), PxInches, PyInches, currentFollowerPose.getHeading()));
                         }
                     } else {
-                        telemetry.addData("Waiting to Re-localized, ", String.format("wait=%.2f, x=%.2f in, y=%.2f in, h=%.1f deg", lastRecolaized.seconds(), PxInches, PyInches, headingDeg));
+                        telemetry.addData("Waiting to Re-localized, ", String.format("wait=%.2f, x=%.2f in, y=%.2f in, h=%.1f deg", lastRelocalized.seconds(), PxInches, PyInches, currentFollowerPose.getHeading()));
                     }
 
-                } catch (Exception ignored) { }
+                } catch (Exception e) {
+                    telemetry.addData("Limelight error", e.getMessage());
+                }
             } else {
                 telemetry.addData("Botpose_MT2", "NULL - Check pipeline configuration");
             }
