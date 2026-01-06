@@ -125,6 +125,7 @@ public class ShooterTuning extends OpMode {
         if (!gamepad2.right_bumper) autoControl();
         else manualControl();
 
+
         bob.tick();
         gamepadUpdate();
     }

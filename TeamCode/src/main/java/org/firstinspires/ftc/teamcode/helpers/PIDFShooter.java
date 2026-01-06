@@ -10,6 +10,7 @@ public class PIDFShooter {
     private double currentRPM = 0;
 
     // Motor/encoder geometry
+    private int run = 0;
     private final double ticksPerRev;
 
     // Target RPM
@@ -134,15 +135,20 @@ public class PIDFShooter {
         // PID output
         double output = kF * targetRPM + kP * error + kI * integralSum + kD * derivative;
 
-        if (currentRPM <= 100) {
-            initialRamping = true;
-        }
+           if (getTargetRPM() <= 100) {
+               run = 1;
+           }
 
-        if (initialRamping) {
-            if (error <= usePID) {
-                initialRamping = false;
+        if (run == 1){
+            if (getTargetRPM() > 2500) run = 2;
+        }
+        if (run == 2) {
+            if ((getTargetRPM() - getCurrentRPM()) <= 200) {
+                run = 0;
                 return Range.clip(output, -1, 1);
-            } else {
+            }
+
+            else {
                 return 1.0;
             }
         }
