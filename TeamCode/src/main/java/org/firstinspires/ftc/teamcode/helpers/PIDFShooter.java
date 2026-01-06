@@ -27,6 +27,10 @@ public class PIDFShooter {
 
     private static final double maxIntegral = 2000;
 
+    private boolean initialRamping = false;
+
+    private int usePID = 500;
+
     // --- Constructors ---
 
     public PIDFShooter(double ticksPerRev) {
@@ -130,6 +134,20 @@ public class PIDFShooter {
         // PID output
         double output = kF * targetRPM + kP * error + kI * integralSum + kD * derivative;
 
+        if (currentRPM <= 100) {
+            initialRamping = true;
+        }
+
+        if (initialRamping) {
+            if (error <= usePID) {
+                initialRamping = false;
+                return Range.clip(output, -1, 1);
+            } else {
+                return 1.0;
+            }
+        }
+
         return Range.clip(output, -1, 1);
+
     }
 }
