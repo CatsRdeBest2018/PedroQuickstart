@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.helpers;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Robot.TICKS_PER_REV;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.TICKS_PER_REV_TURRET;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -11,6 +14,7 @@ public class PIDFTurret {
     // Target position (encoder ticks)
     private double targetAngle = 0;
 
+    private double turretAngle = 0;
     // PID state
     private double integralSum = 0;
     private double lastError = 0;
@@ -37,6 +41,11 @@ public class PIDFTurret {
         timer.reset();
     }
 
+    public double getTurretAngle(double currentTicks){
+        double rev = (currentTicks / (double) TICKS_PER_REV_TURRET) % 1.0;
+        turretAngle = rev * 360;
+        return turretAngle;
+    }
     public void setTargetAngle(double targetAngle) {
         this.targetAngle = targetAngle;
     }

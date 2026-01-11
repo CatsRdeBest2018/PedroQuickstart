@@ -1,43 +1,38 @@
 package org.firstinspires.ftc.teamcode.drive.limelight;
 
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
+
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
+import org.opencv.video.KalmanFilter;
 
-import java.util.List;
 
 @Configurable
 @TeleOp
 public class TurretTele extends OpMode {
     Bob bob = new Bob();
 
-    private double cameraHeight = 0; // inches
-    private double tagHeight = 14; // inches
-    private double heightDif = tagHeight-cameraHeight;
-    private double distanceFromTag; // inches
+    private final double cameraHeight = 0; // inches
+    private final double tagHeight = 14; // inches
+    private final double heightDif = tagHeight-cameraHeight;
     Limelight3A limelight;
 
     private Follower follower;
     GoBildaPinpointDriver pinpoint;
-    public static int wait = 5;
+
 
     public static double startX = 108.939;
     public static double startY = 137.322;
@@ -78,7 +73,6 @@ public class TurretTele extends OpMode {
         limelight.start();
     }
 
-    ElapsedTime lastRelocalized = new ElapsedTime();
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -113,17 +107,35 @@ public class TurretTele extends OpMode {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             bob.turretController.update(result.getTx());
-//            if (Math.abs(result.getTx()) < 0.5){
-//                updateDistanceTag(result.getTy());
-//            }
+            if (Math.abs(result.getTx()) < 0.5){
+                updatePose(result.getTy());
+            }
+
         } else {
             telemetry.addData("Limelight", "No Targets");
         }
 
         telemetry.update();
     }
-//    private void updateDistanceTag(double ty){
-//        distanceFromTag = heightDif/Math.tan(ty);
-//
-//    }
+    private void updatePose(double ty){
+        try {
+            Pose currentFollowerPose = follower.getPose();
+            double distanceFromTag = heightDif / Math.tan(Math.toRadians(ty));
+            double trueAngle = follower.getHeading() + bob.turretController.getTurretAngle();
+            trueAngle = Math.toRadians(trueAngle);
+
+            if (trueAngle != 90) {
+                double visionY = Math.sin(trueAngle) * distanceFromTag;
+                double visionX = Math.cos(trueAngle) * distanceFromTag;
+                visionX = 127.628 - visionX;
+                visionY = 131.669 - visionY;
+                double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
+                double finalY = currentFollowerPose.getY() + KALMAN_TURRET * (visionY - currentFollowerPose.getY());
+                follower.setPose(new Pose(finalX, finalY, currentFollowerPose.getHeading()));
+            }
+        }
+        catch (Exception e) {
+            telemetry.addData("Limelight error", e.getMessage());
+        }
+    }
 }

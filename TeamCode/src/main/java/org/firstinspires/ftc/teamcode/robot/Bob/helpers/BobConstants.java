@@ -22,6 +22,8 @@ public class BobConstants {
     public static double TARGET_RPM = 0;
 
     // ==================== PIDF TURRET ====================
+    public static double TICKS_PER_REV_TURRET = 28;
+    public static double KALMAN_TURRET = 0.1;
     public static double tP = 0;
     public static double tI = 0;
     public static double tD = 0;

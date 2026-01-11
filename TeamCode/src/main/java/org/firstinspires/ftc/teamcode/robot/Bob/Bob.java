@@ -96,6 +96,7 @@ public class Bob extends Meccanum implements Robot {
         shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         turret.setZeroPowerBehavior(BRAKE);
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //turret.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -282,7 +283,9 @@ public class Bob extends Meccanum implements Robot {
             turretPIDF = new PIDFTurret(tP, tI, tD,tF);
             turretPIDF.reset();
         }
-
+        public double getTurretAngle(){
+            return turretPIDF.getTurretAngle(turret.getCurrentPosition());
+        }
         public void update(double currentAngle){
             double power = turretPIDF.update(currentAngle);
             turret.setPower(power);
