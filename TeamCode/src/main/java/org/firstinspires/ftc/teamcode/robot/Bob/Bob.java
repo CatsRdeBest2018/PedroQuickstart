@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.helpers.PIDFShooter;
+import org.firstinspires.ftc.teamcode.helpers.PIDFTurret;
 import org.firstinspires.ftc.teamcode.helpers.PIDShooter;
 import org.firstinspires.ftc.teamcode.helpers.PIDSpindexer;
 import org.firstinspires.ftc.teamcode.robot.Bob.Meccanum.Meccanum;
@@ -30,12 +31,14 @@ public class Bob extends Meccanum implements Robot {
     protected HardwareMap hw = null;
 
     // Controllers
-    public ShooterController shooterController = new ShooterController();
     public SpindexerController spindexerController = new SpindexerController();
     public IntakeController intakeController = new IntakeController();
     public TransferController transferController = new TransferController();
     public ProximityController proximityController = new ProximityController();
     public NewShooterController newShooterController = new NewShooterController();
+    public TurretController turretController = new TurretController();
+
+
     public RevColorSensorV3 c;
     public RevColorSensorV3 c2;
     public RevColorSensorV3 c3;
@@ -43,6 +46,8 @@ public class Bob extends Meccanum implements Robot {
     public DcMotorEx intake;
     public DcMotorEx shooterRight;
     public DcMotorEx shooterLeft;
+
+    public DcMotorEx turret;
 
     // Servos
     public CRServo spindexer;
@@ -83,10 +88,17 @@ public class Bob extends Meccanum implements Robot {
         shooterRight = (DcMotorEx) hardwareMap.dcMotor.get("sr");
         shooterLeft = (DcMotorEx) hardwareMap.dcMotor.get("sl");
 
+        turret = (DcMotorEx) hardwareMap.dcMotor.get("turret");
+
         shooterLeft.setZeroPowerBehavior(FLOAT);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        turret.setZeroPowerBehavior(BRAKE);
+        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //turret.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         shooterRight.setZeroPowerBehavior(FLOAT);
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -114,6 +126,7 @@ public class Bob extends Meccanum implements Robot {
 
        // shooterController.start();
         newShooterController.start();
+        turretController.start();
         spindexerController.start();
         intakeController.start();
         transferController.start();
@@ -125,8 +138,6 @@ public class Bob extends Meccanum implements Robot {
 
     public void tick() {
         tickMacros();
-      //  shooterController.shooterTick();
-      //  spindexerController.spindexerTick();
         intakeController.intakeTick();
         transferController.transferTick();
         proximityController.proximityTick();
@@ -152,47 +163,7 @@ public class Bob extends Meccanum implements Robot {
         }
     }
 
-    // TODO: SHOOTER SHIT
 
-    public class ShooterController {
-        private int targetRPM = 0;
-        private double velocity = 0;
-
-        public void start() {
-            // Initialize shooter
-        }
-
-        public void setRPM(int rpm) {
-            targetRPM = rpm;
-            velocity = RPMtoVelocity(rpm);
-        }
-
-        public void setZone1() {
-            setRPM(RPM_ZONE1);
-        }
-
-        public void setZone2() {
-            setRPM(RPM_ZONE2);
-        }
-
-        public void stop() {
-            setRPM(RPM_OFF);
-        }
-
-        public void shooterTick() {
-            shooterLeft.setVelocity(velocity);
-            shooterRight.setVelocity(velocity);
-
-        }
-
-        private double RPMtoVelocity(int targetRPM) {
-            return (targetRPM * TICKS_PER_REV_SHOOTER) / 60.0;
-        }
-
-        public int getCurrentRPM() {
-            return targetRPM;
-        }
-    }
     public class ProximityController {
         private boolean isBall;
         public void proximityTick(){
@@ -303,8 +274,29 @@ public class Bob extends Meccanum implements Robot {
 
     }
 
-    // TODO: INTAKE SHIT
+    // TODO:  TURRET PIDF
 
+    public class TurretController {
+        private PIDFTurret turretPIDF;
+        public void start() {
+            turretPIDF = new PIDFTurret(tP, tI, tD,tF);
+            turretPIDF.reset();
+        }
+
+        public void update(double currentAngle){
+            double power = turretPIDF.update(currentAngle);
+            turret.setPower(power);
+        }
+        public void setTargetAngle(double angle) {
+            turretPIDF.setTargetAngle(angle);
+        }
+        public double getTargetAngle(){
+            return turretPIDF.getTargetAngle();
+        }
+
+    }
+
+    // TODO: INTAKE SHIT
 
     public class IntakeController {
         private double intakePower = 0;

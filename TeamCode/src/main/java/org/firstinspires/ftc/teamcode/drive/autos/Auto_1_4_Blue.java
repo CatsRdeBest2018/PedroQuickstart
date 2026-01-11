@@ -646,6 +646,7 @@ public class Auto_1_4_Blue extends OpMode {
             List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fiducial : fiducials) {
                 int id = fiducial.getFiducialId();
+
                 telemetry.addData("id: ", id);
 
                 switch (id) {

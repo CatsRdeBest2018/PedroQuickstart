@@ -12,21 +12,20 @@ public class BobConstants {
     public static int RPM_ZONE1_AUTO = 2500;
     public static int RPM_ZONE2 = 3200;
     public static int RPM_OFF = 0;
-    // ZONE 1 PID Values
-    public static double SHOOTER_P_Z1 = 0.012;
-    public static double SHOOTER_I_Z1 = 0;
-    public static double SHOOTER_D_Z1 = 0.0000004;
-    // ZONE 2 PID Values
-    public static double SHOOTER_P_Z2 = 0.014;
-    public static double SHOOTER_I_Z2 = 0.0006;
-    public static double SHOOTER_D_Z2 = 0.0000004;
 
-    // PIDF SHOOTER VALUES
+
+    // ==================== PIDF SHOOTER ====================
     public static double P = 0.2;
     public static double I = 0.1;
     public static double D = 0.000001;
     public static double F = 0.006;
     public static double TARGET_RPM = 0;
+
+    // ==================== PIDF TURRET ====================
+    public static double tP = 0;
+    public static double tI = 0;
+    public static double tD = 0;
+    public static double tF = 0;
 
 
     // ==================== SPINDEXER ====================
@@ -34,9 +33,6 @@ public class BobConstants {
     public static double SPINDEX_KP = 0.00032;
     public static double SPINDEX_KI = 0;
     public static double SPINDEX_KD = 0.00005;
-//    public static double SPINDEX_KP = 0.0003;
-//    public static double SPINDEX_KI = 0.00003;
-//    public static double SPINDEX_KD = 0.00007;
 
     public static double SPINDEX_KP_A = 0.00014;
     public static double SPINDEX_KI_A = 0.000009;
