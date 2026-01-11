@@ -52,8 +52,8 @@ public class LimeLightLocalization2 extends OpMode {
     // pose history update interval
     public static double poseHistoryDtMs = 50.0;
 
+    // field conversion shi
     public static double limelightYawOffsetDeg = 90.0;
-
     public static double fieldHalfIn = 72.0;
     public static boolean flipY = true; // if true: Py = -LLy + 72, else Py = +LLy + 72
 
@@ -160,32 +160,55 @@ public class LimeLightLocalization2 extends OpMode {
                 double visionY = (flipY ? (-llYIn) : llYIn) + fieldHalfIn;
 
                 telemetry.addData("Vision Pedro (in)", String.format("(%.1f, %.1f)", visionX, visionY));
-
+                
+                // if you can relocalize
                 boolean okTime = (waitSeconds <= 0.0) || (lastRelocalized.seconds() >= waitSeconds);
 
-                // Latency compensation using Pedro PoseHistory arrays
+                // total delay time
                 double captureLatencyMs = result.getCaptureLatency();
                 double targetingLatencyMs = result.getTargetingLatency();
                 double parseLatencyMs = result.getParseLatency();
                 double stalenessMs = result.getStaleness();
-                double totalLatencyMs = captureLatencyMs + targetingLatencyMs + parseLatencyMs + stalenessMs;
+
+                double captureLatencyUsedMs = Double.isFinite(captureLatencyMs) ? captureLatencyMs : 0.0;
+                double targetingLatencyUsedMs = Double.isFinite(targetingLatencyMs) ? targetingLatencyMs : 0.0;
+                double parseLatencyUsedMs = Double.isFinite(parseLatencyMs) ? parseLatencyMs : 0.0;
+                double stalenessUsedMs = Double.isFinite(stalenessMs) ? stalenessMs : 0.0;
+                double totalLatencyMs = captureLatencyUsedMs + targetingLatencyUsedMs + parseLatencyUsedMs + stalenessUsedMs;
 
                 telemetry.addData("LL capture latency (ms)", String.format("%.0f", captureLatencyMs));
                 telemetry.addData("LL targeting latency (ms)", String.format("%.0f", targetingLatencyMs));
                 telemetry.addData("LL parse latency (ms)", String.format("%.0f", parseLatencyMs));
                 telemetry.addData("LL staleness (ms)", String.format("%.0f", stalenessMs));
                 telemetry.addData("LL total latency (ms)", String.format("%.0f", totalLatencyMs));
+                
+                // if delay time is ok
+                boolean captureFinite = Double.isFinite(captureLatencyMs);
+                boolean targetingFinite = Double.isFinite(targetingLatencyMs);
+                boolean parseFinite = Double.isFinite(parseLatencyMs);
+                boolean stalenessFinite = Double.isFinite(stalenessMs);
+                boolean latencyComponentsFinite = captureFinite && targetingFinite && parseFinite && stalenessFinite;
 
-                boolean okLatency = Double.isFinite(totalLatencyMs)
-                        && totalLatencyMs >= 0
-                        && totalLatencyMs <= maxLatencyMs;
+                boolean okLatency = totalLatencyMs >= 0 && totalLatencyMs <= maxLatencyMs;
 
-                if (okTime && okLatency) {
+                boolean canCorrect = okTime && okLatency;
+                String rejectReason = null;
+
+                if (!okTime) {
+                    rejectReason = String.format("waiting %.2f/%.2f s", lastRelocalized.seconds(), waitSeconds);
+                } else if (!okLatency) {
+                    rejectReason = "latency too high for history buffer";
+                }
+
+                if (canCorrect) {
+                    // check pos at past time
                     double[] hx = follower.getPoseHistory().getXPositionsArray();
                     double[] hy = follower.getPoseHistory().getYPositionsArray();
                     if (hx == null || hy == null || hx.length == 0 || hy.length == 0) {
-                        telemetry.addData("Vision rejected", "pose history unavailable");
+                        canCorrect = false;
+                        rejectReason = "pose history unavailable";
                     } else {
+                        // estimate average pos between pos type
                         int maxIndex = Math.min(hx.length, hy.length) - 1;
 
                         double idx = totalLatencyMs / poseHistoryDtMs;
@@ -211,7 +234,8 @@ public class LimeLightLocalization2 extends OpMode {
                         telemetry.addData("Past pose (in)", String.format("(%.1f, %.1f)", pastX, pastY));
                         telemetry.addData("Vision delta@past (in)",
                                 String.format("(dx=%.1f, dy=%.1f) jump=%.1f", dxPast, dyPast, jump));
-
+                        
+                        // if jump not too big
                         if (jump <= maxJumpIn) {
                             // Apply correction to the current pose (blended)
                             Pose cur = follower.getPose();
@@ -224,19 +248,18 @@ public class LimeLightLocalization2 extends OpMode {
                             telemetry.addData("Vision applied",
                                     String.format("k=%.2f -> (%.2f, %.2f)", kVision, newX, newY));
                         } else {
-                            telemetry.addData("Vision rejected", String.format("jump %.1f > %.1f", jump, maxJumpIn));
+                            canCorrect = false;
+                            rejectReason = String.format("jump %.1f > %.1f", jump, maxJumpIn);
                         }
                     }
-                } else {
-                    if (!okTime) telemetry.addData("Vision waiting",
-                            String.format("%.2f/%.2f s", lastRelocalized.seconds(), waitSeconds));
-                    if (!okLatency) {
-                        if (!Double.isFinite(totalLatencyMs)) {
-                            telemetry.addData("Vision rejected", "latency NaN/Inf");
-                        } else {
-                            telemetry.addData("Vision rejected", "latency too high for history buffer");
-                        }
-                    }
+                }
+                if (!canCorrect && rejectReason != null) {
+                    telemetry.addData("Vision rejected", rejectReason);
+                }
+                if (!latencyComponentsFinite) {
+                    telemetry.addData("LL latency finite",
+                            String.format("cap=%b targ=%b parse=%b stale=%b",
+                                    captureFinite, targetingFinite, parseFinite, stalenessFinite));
                 }
             } else {
                 telemetry.addData("Botpose_MT2", "NULL - Check pipeline configuration");
