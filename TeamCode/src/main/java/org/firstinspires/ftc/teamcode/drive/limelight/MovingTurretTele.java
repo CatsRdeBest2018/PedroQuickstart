@@ -22,9 +22,22 @@ import org.opencv.video.KalmanFilter;
 
 @Configurable
 @TeleOp
-public class TurretTele extends OpMode {
+public class MovingTurretTele extends OpMode {
     Bob bob = new Bob();
 
+    private double targetAngle = 0;
+    private double distanceToTarget = 0;
+    private double horiVeliToTarget = 0;
+    private double veliTowardTarget = 0;
+    private double difX = 0;
+    private double difY = 0;
+    private double targetX = 134.64543889845095;
+    private double targetY = 139.24612736660927;
+    private double xPos = 0;
+    private double yPos = 0;
+    private double xVel = 0;
+    private double yVel = 0;
+    private final double timeInAir = 0.8;
     private final double cameraHeight = 0; // inches
     private final double tagHeight = 14; // inches
     private final double heightDif = tagHeight-cameraHeight;
@@ -97,13 +110,15 @@ public class TurretTele extends OpMode {
         }
         double ppYaw = pinpoint.getHeading(AngleUnit.DEGREES);
 
-        telemetry.addData("ppYaw", ppYaw);
+//        telemetry.addData("ppYaw", ppYaw);
         limelight.updateRobotOrientation(ppYaw+90);
 
         if (gamepad1.left_bumper){
             follower.setPose(new Pose(128.13769363166955,71.62822719449225,follower.getHeading()));
         }
 
+
+        updateTargetAngle();
         // LIMELIGHT
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
@@ -119,16 +134,16 @@ public class TurretTele extends OpMode {
         telemetry.update();
     }
     private void updatePose(double ty){
-        try {
             Pose currentFollowerPose = follower.getPose();
             double distanceFromTag = heightDif / Math.tan(Math.toRadians(ty));
             double trueAngle = Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
             trueAngle = Math.toRadians(trueAngle);
-            telemetry.addLine("limelight distance to target: " + distanceFromTag);
-            telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
-            telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
-            telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
-            telemetry.addLine("TRUE turret angle: " + trueAngle);
+        telemetry.addLine("limelight distance to target: " + distanceFromTag);
+        telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
+        telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
+        telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
+        telemetry.addLine("TRUE turret angle: " + trueAngle);
+
             if (trueAngle != 90) {
                 double visionY = Math.sin(trueAngle) * distanceFromTag;
                 double visionX = Math.cos(trueAngle) * distanceFromTag;
@@ -137,10 +152,29 @@ public class TurretTele extends OpMode {
                 double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
                 double finalY = currentFollowerPose.getY() + KALMAN_TURRET * (visionY - currentFollowerPose.getY());
                 follower.setPose(new Pose(finalX, finalY, currentFollowerPose.getHeading()));
+
             }
-        }
-        catch (Exception e) {
-            telemetry.addData("Limelight error", e.getMessage());
-        }
+
+
+    }
+    private void updateTargetAngle(){
+        xPos = follower.getPose().getX();
+        yPos = follower.getPose().getY();
+        xVel = follower.getVelocity().getXComponent();
+        yVel = follower.getVelocity().getYComponent();
+        difX = targetX - xPos;
+        difY = targetY - yPos;
+        distanceToTarget = Math.sqrt(difX*difX + difY*difY);
+        horiVeliToTarget = xVel * (-difY / distanceToTarget) + (yVel * (difX / distanceToTarget));
+        targetAngle = Math.toDegrees(Math.atan((-horiVeliToTarget*timeInAir)/distanceToTarget));
+        bob.turretController.setTargetAngle(targetAngle);
+
+        // for adjustable hood:
+        veliTowardTarget = xVel * (difX / distanceToTarget) + yVel * (difY / distanceToTarget);
+        telemetry.addLine("xVel: " + xVel);
+        telemetry.addLine("yVel: " + yVel);
+        telemetry.addLine("sideways velocity to target: " + horiVeliToTarget);
+        telemetry.addLine("target angle: " + targetAngle);
+
     }
 }

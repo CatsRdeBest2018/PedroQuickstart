@@ -286,6 +286,10 @@ public class Bob extends Meccanum implements Robot {
         public double getTurretAngle(){
             return turretPIDF.getTurretAngle(turret.getCurrentPosition());
         }
+        public double getTurretTicks(){
+            return turret.getCurrentPosition();
+        }
+
         public void update(double currentAngle){
             double power = turretPIDF.update(currentAngle);
             turret.setPower(power);
