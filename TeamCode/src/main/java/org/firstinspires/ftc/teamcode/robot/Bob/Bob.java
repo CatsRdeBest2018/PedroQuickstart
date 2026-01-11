@@ -456,7 +456,6 @@ public class Bob extends Meccanum implements Robot {
         }
     }
     public void tickWithMacros() {
-        if (follower != null) follower.update();
         tickMacros();
        // shooterController.shooterTick();
         spindexerController.spindexerTick();
