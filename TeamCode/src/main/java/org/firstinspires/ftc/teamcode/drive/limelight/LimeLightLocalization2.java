@@ -5,14 +5,14 @@ import android.annotation.SuppressLint;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,15 +27,39 @@ public class LimeLightLocalization2 extends OpMode {
     DcMotorEx motorBackLeft;
     DcMotorEx motorFrontRight;
     DcMotorEx motorBackRight;
-    Limelight3A limelight;
 
+    Limelight3A limelight;
     private Follower follower;
     GoBildaPinpointDriver pinpoint;
 
-    public static int wait = 5;
+    // start pose
     public static double startX = 108.939;
     public static double startY = 137.322;
     public static double startHeadingDeg = 270;
+
+    // how much time in between relocalizing
+    public static double waitSeconds = 0.0;
+
+    // kalman filter
+    public static double kVision = 0.30;      // 0.15–0.50 typical
+
+    // max distance to relocalize to
+    public static double maxJumpIn = 24.0;
+
+    // max image capture delay
+    public static double maxLatencyMs = 1400.0;
+
+    // pose history update interval
+    public static double poseHistoryDtMs = 50.0;
+
+    public static double limelightYawOffsetDeg = 90.0;
+
+    public static double fieldHalfIn = 72.0;
+    public static boolean flipY = true; // if true: Py = -LLy + 72, else Py = +LLy + 72
+
+    public static double metersToInches = 39.3701;
+
+    private final ElapsedTime lastRelocalized = new ElapsedTime();
 
     public void drawCurrent() {
         try {
@@ -47,9 +71,7 @@ public class LimeLightLocalization2 extends OpMode {
     }
 
     @Override
-    // runs on init press
     public void init() {
-        // define and init robot
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("bl");
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("fr");
@@ -68,102 +90,153 @@ public class LimeLightLocalization2 extends OpMode {
         pinpoint.recalibrateIMU();
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.pipelineSwitch(0); // Switch to pipeline number 0
+        limelight.setPollRateHz(100);
+        limelight.pipelineSwitch(0);
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(startX, startY, Math.toRadians(startHeadingDeg)));
         follower.update();
 
+        lastRelocalized.reset();
     }
 
     @Override
-    // runs on start press
     public void start() {
-        // run everything to start positions
         limelight.start();
+        lastRelocalized.reset();
     }
-
-    ElapsedTime lastRelocalized = new ElapsedTime();
 
     @SuppressLint("DefaultLocale")
     @Override
-    // loops after start
-    // press
     public void loop() {
         pinpoint.update();
         follower.update();
 
         Pose currentPose = follower.getPose();
-        telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+        telemetry.addData("Pedro Pose",
+                String.format("x=%.2f in, y=%.2f in, h=%.1f deg",
+                        currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
         Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
-//       if (gamepad2.start || gamepad1.start) return;
+        // Driver control
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
-        if (!gamepad1.right_bumper){
-            motorFrontLeft.setPower(y + x + rx);
-            motorBackLeft.setPower(y - x + rx);
-            motorFrontRight.setPower(y - x - rx);
-            motorBackRight.setPower(y + x - rx);
-        }
-        else {
-            motorFrontLeft.setPower(0.3 * (y + x + rx));
-            motorBackLeft.setPower(0.3 * (y - x + rx));
-            motorFrontRight.setPower(0.3 * (y - x - rx));
-            motorBackRight.setPower(0.3 * (y + x - rx));
-        }
+        double scale = gamepad1.right_bumper ? 0.3 : 1.0;
+        motorFrontLeft.setPower(scale * (y + x + rx));
+        motorBackLeft.setPower(scale * (y - x + rx));
+        motorFrontRight.setPower(scale * (y - x - rx));
+        motorBackRight.setPower(scale * (y + x - rx));
 
-        double ppYaw = pinpoint.getHeading(AngleUnit.DEGREES);
-        double pedroYaw = Math.toDegrees(follower.getHeading());
+        // Feed Limelight yaw (deg)
+        double ppYawDeg = pinpoint.getHeading(AngleUnit.DEGREES);
+        double pedroYawDeg = Math.toDegrees(follower.getPose().getHeading());
 
-        telemetry.addData("ppYaw", ppYaw);
-        telemetry.addData("pedroYaw", pedroYaw);
+        telemetry.addData("ppYaw (deg)", ppYawDeg);
+        telemetry.addData("pedroYaw (deg)", pedroYawDeg);
 
-        limelight.updateRobotOrientation(ppYaw+90);
+        limelight.updateRobotOrientation(pedroYawDeg + limelightYawOffsetDeg);
 
+        // Read Limelight result
         LLResult result = limelight.getLatestResult();
 
         if (result != null && result.isValid()) {
             Pose3D botpose_mt2 = result.getBotpose_MT2();
             telemetry.addData("Botpose_MT2 exists", botpose_mt2 != null);
-
             if (botpose_mt2 != null) {
+                // Raw MT2 meters
                 double a = botpose_mt2.getPosition().x;
                 double b = botpose_mt2.getPosition().y;
-                double z = botpose_mt2.getPosition().z;
 
-                telemetry.addData("MT2 Location:", "(" + a + ", " + b + ", " + z + ")");
+                // Convert meters -> inches
+                double llXIn = a * metersToInches;
+                double llYIn = b * metersToInches;
 
-                try {
-                    Pose currentFollowerPose = follower.getPose();
+                // Convert -> Pedro inches (your tested mapping)
+                double visionX = llXIn + fieldHalfIn;
+                double visionY = (flipY ? (-llYIn) : llYIn) + fieldHalfIn;
 
-                    double LPxInches = a * 39.3701;
-                    double LPyInches = b * 39.3701;
+                telemetry.addData("Vision Pedro (in)", String.format("(%.1f, %.1f)", visionX, visionY));
 
-                    double PxInches = LPxInches+72;
-                    double PyInches = -LPyInches+72;
+                boolean okTime = (waitSeconds <= 0.0) || (lastRelocalized.seconds() >= waitSeconds);
 
-                    boolean clearView = true;
+                // Latency compensation using Pedro PoseHistory arrays
+                double captureLatencyMs = result.getCaptureLatency();
+                double targetingLatencyMs = result.getTargetingLatency();
+                double parseLatencyMs = result.getParseLatency();
+                double stalenessMs = result.getStaleness();
+                double totalLatencyMs = captureLatencyMs + targetingLatencyMs + parseLatencyMs + stalenessMs;
 
-                    if (lastRelocalized.seconds() >= wait) {
-                        if (clearView) {
-                            telemetry.addData("Re-localized", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", PxInches, PyInches, currentFollowerPose.getHeading()));
-                            follower.setPose(new Pose(PxInches, PyInches, currentFollowerPose.getHeading()));
-                            lastRelocalized.reset();
-                        } else {
-                            telemetry.addData("April Tag not in clear view", String.format("wait=%.2f, x=%.2f in, y=%.2f in, h=%.1f deg", lastRelocalized.seconds(), PxInches, PyInches, currentFollowerPose.getHeading()));
-                        }
+                telemetry.addData("LL capture latency (ms)", String.format("%.0f", captureLatencyMs));
+                telemetry.addData("LL targeting latency (ms)", String.format("%.0f", targetingLatencyMs));
+                telemetry.addData("LL parse latency (ms)", String.format("%.0f", parseLatencyMs));
+                telemetry.addData("LL staleness (ms)", String.format("%.0f", stalenessMs));
+                telemetry.addData("LL total latency (ms)", String.format("%.0f", totalLatencyMs));
+
+                boolean okLatency = Double.isFinite(totalLatencyMs)
+                        && totalLatencyMs >= 0
+                        && totalLatencyMs <= maxLatencyMs;
+
+                if (okTime && okLatency) {
+                    double[] hx = follower.getPoseHistory().getXPositionsArray();
+                    double[] hy = follower.getPoseHistory().getYPositionsArray();
+                    if (hx == null || hy == null || hx.length == 0 || hy.length == 0) {
+                        telemetry.addData("Vision rejected", "pose history unavailable");
                     } else {
-                        telemetry.addData("Waiting to Re-localized, ", String.format("wait=%.2f, x=%.2f in, y=%.2f in, h=%.1f deg", lastRelocalized.seconds(), PxInches, PyInches, currentFollowerPose.getHeading()));
-                    }
+                        int maxIndex = Math.min(hx.length, hy.length) - 1;
 
-                } catch (Exception e) {
-                    telemetry.addData("Limelight error", e.getMessage());
+                        double idx = totalLatencyMs / poseHistoryDtMs;
+                        int i0 = (int) Math.floor(idx);
+                        int i1 = i0 + 1;
+                        if (i0 < 0) i0 = 0;
+                        if (i0 > maxIndex) i0 = maxIndex;
+                        if (i1 < 0) i1 = 0;
+                        if (i1 > maxIndex) i1 = maxIndex;
+                        double frac = idx - Math.floor(idx);
+                        if (frac < 0) frac = 0;
+                        if (frac > 1) frac = 1;
+
+                        double pastX = hx[i0] * (1.0 - frac) + hx[i1] * frac;
+                        double pastY = hy[i0] * (1.0 - frac) + hy[i1] * frac;
+
+                        // Error at capture time
+                        double dxPast = visionX - pastX;
+                        double dyPast = visionY - pastY;
+                        double jump = Math.hypot(dxPast, dyPast);
+
+                        telemetry.addData("History idx", String.format("idx=%.2f i0=%d i1=%d frac=%.2f", idx, i0, i1, frac));
+                        telemetry.addData("Past pose (in)", String.format("(%.1f, %.1f)", pastX, pastY));
+                        telemetry.addData("Vision delta@past (in)",
+                                String.format("(dx=%.1f, dy=%.1f) jump=%.1f", dxPast, dyPast, jump));
+
+                        if (jump <= maxJumpIn) {
+                            // Apply correction to the current pose (blended)
+                            Pose cur = follower.getPose();
+                            double newX = cur.getX() + kVision * dxPast;
+                            double newY = cur.getY() + kVision * dyPast;
+
+                            follower.setPose(new Pose(newX, newY, cur.getHeading()));
+                            lastRelocalized.reset();
+
+                            telemetry.addData("Vision applied",
+                                    String.format("k=%.2f -> (%.2f, %.2f)", kVision, newX, newY));
+                        } else {
+                            telemetry.addData("Vision rejected", String.format("jump %.1f > %.1f", jump, maxJumpIn));
+                        }
+                    }
+                } else {
+                    if (!okTime) telemetry.addData("Vision waiting",
+                            String.format("%.2f/%.2f s", lastRelocalized.seconds(), waitSeconds));
+                    if (!okLatency) {
+                        if (!Double.isFinite(totalLatencyMs)) {
+                            telemetry.addData("Vision rejected", "latency NaN/Inf");
+                        } else {
+                            telemetry.addData("Vision rejected", "latency too high for history buffer");
+                        }
+                    }
                 }
             } else {
                 telemetry.addData("Botpose_MT2", "NULL - Check pipeline configuration");
