@@ -93,7 +93,6 @@ public class Auto_1_1Blue extends OpMode {
 
         finished = true;
         RobotContext.lastPose = follower.getPose();
-        RobotContext.lastSpindexerTicks = bob.spincoder.getCurrentPosition();
     }
 
     public void buildPaths() {

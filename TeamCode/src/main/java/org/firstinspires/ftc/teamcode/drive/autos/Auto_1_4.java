@@ -79,11 +79,10 @@ public class Auto_1_4 extends OpMode {
         if (opmodeTimer.getElapsedTimeSeconds() > 29.9 || pathState == -1) savePose();
     }
     private void savePose() {
-        if (finished) return;  // make it idempotent
+        if (finished) return;
 
         finished = true;
         RobotContext.lastPose = follower.getPose();
-        RobotContext.lastSpindexerTicks = bob.spincoder.getCurrentPosition();
     }
 
     public void buildPaths() {
