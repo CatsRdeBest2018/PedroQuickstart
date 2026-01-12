@@ -83,7 +83,7 @@ public class Auto_1_1Blue extends OpMode {
     }
 
     private void endAuto() {
-        bob.shooterController.setRPM(0);
+       // bob.shooterController.setRPM(0);
         bob.cancelMacros();
         if (pathState != -1) setP(20);
         if (opmodeTimer.getElapsedTimeSeconds() > 29.9 || pathState == -1) savePose();

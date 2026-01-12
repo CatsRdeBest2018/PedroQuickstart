@@ -47,7 +47,7 @@ public class Bob extends Meccanum implements Robot {
     public DcMotorEx shooterRight;
     public DcMotorEx shooterLeft;
 
-    public DcMotorEx turret;
+    //public DcMotorEx turret;
 
     // Servos
     public CRServo spindexer;
@@ -88,16 +88,16 @@ public class Bob extends Meccanum implements Robot {
         shooterRight = (DcMotorEx) hardwareMap.dcMotor.get("sr");
         shooterLeft = (DcMotorEx) hardwareMap.dcMotor.get("sl");
 
-        turret = (DcMotorEx) hardwareMap.dcMotor.get("turret");
+     //   turret = (DcMotorEx) hardwareMap.dcMotor.get("turret");
 
         shooterLeft.setZeroPowerBehavior(FLOAT);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        turret.setZeroPowerBehavior(BRAKE);
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // turret.setZeroPowerBehavior(BRAKE);
+       // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       // turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //turret.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
@@ -284,15 +284,17 @@ public class Bob extends Meccanum implements Robot {
             turretPIDF.reset();
         }
         public double getTurretAngle(){
-            return turretPIDF.getTurretAngle(turret.getCurrentPosition());
+            return 0.0;
+                   // return turretPIDF.getTurretAngle(turret.getCurrentPosition());
         }
         public double getTurretTicks(){
-            return turret.getCurrentPosition();
+            return 0.0;
+           // return turret.getCurrentPosition();
         }
 
         public void update(double currentAngle){
             double power = turretPIDF.update(currentAngle);
-            turret.setPower(power);
+            //turret.setPower(power);
         }
         public void setTargetAngle(double angle) {
             turretPIDF.setTargetAngle(angle);

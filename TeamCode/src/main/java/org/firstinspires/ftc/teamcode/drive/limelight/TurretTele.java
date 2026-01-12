@@ -15,9 +15,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
-import org.opencv.video.KalmanFilter;
 
 
 @Configurable
@@ -25,8 +23,8 @@ import org.opencv.video.KalmanFilter;
 public class TurretTele extends OpMode {
     Bob bob = new Bob();
 
-    private final double cameraHeight = 0; // inches
-    private final double tagHeight = 14; // inches
+    private final double cameraHeight = 11.25; // inches
+    private final double tagHeight = 29.5; // inches
     private final double heightDif = tagHeight-cameraHeight;
     Limelight3A limelight;
 
@@ -34,14 +32,10 @@ public class TurretTele extends OpMode {
     GoBildaPinpointDriver pinpoint;
 
 
-    public static double startX = 108.939;
-    public static double startY = 137.322;
-    public static double startHeadingDeg = 270;
-
     public void drawCurrent() {
         try {
-            Drawing.drawRobot(follower.getPose());
-            Drawing.sendPacket();
+//            Drawing.drawRobot(follower.getPose());
+//            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -61,7 +55,7 @@ public class TurretTele extends OpMode {
         limelight.pipelineSwitch(0); // Switch to pipeline number 0
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(startX, startY, Math.toRadians(startHeadingDeg)));
+        follower.setStartingPose(new Pose(86.89230769230768, 9.353846153846153, Math.toRadians(90)));
         follower.update();
 
     }
@@ -85,7 +79,7 @@ public class TurretTele extends OpMode {
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
-        Drawing.drawPoseHistory(follower.getPoseHistory());
+        //Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 

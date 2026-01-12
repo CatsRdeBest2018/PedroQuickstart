@@ -5,23 +5,17 @@ import android.annotation.SuppressLint;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
-
-import java.util.List;
 
 @Configurable
 @TeleOp
@@ -42,8 +36,8 @@ public class LocalizationDavid extends OpMode {
 
     public void drawCurrent() {
         try {
-            Drawing.drawRobot(follower.getPose());
-            Drawing.sendPacket();
+//            Drawing.drawRobot(follower.getPose());
+//            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -100,7 +94,7 @@ public class LocalizationDavid extends OpMode {
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
-        Drawing.drawPoseHistory(follower.getPoseHistory());
+        //Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 //       if (gamepad2.start || gamepad1.start) return;

@@ -15,9 +15,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
-import org.opencv.video.KalmanFilter;
 
 
 @Configurable
@@ -38,8 +36,8 @@ public class MovingTurretTele extends OpMode {
     private double xVel = 0;
     private double yVel = 0;
     private final double timeInAir = 0.8;
-    private final double cameraHeight = 0; // inches
-    private final double tagHeight = 14; // inches
+    private final double cameraHeight = 11.25; // inches
+    private final double tagHeight = 29.5;  // inches
     private final double heightDif = tagHeight-cameraHeight;
     Limelight3A limelight;
 
@@ -53,8 +51,8 @@ public class MovingTurretTele extends OpMode {
 
     public void drawCurrent() {
         try {
-            Drawing.drawRobot(follower.getPose());
-            Drawing.sendPacket();
+//            Drawing.drawRobot(follower.getPose());
+//            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -98,7 +96,7 @@ public class MovingTurretTele extends OpMode {
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
-        Drawing.drawPoseHistory(follower.getPoseHistory());
+        //Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 
