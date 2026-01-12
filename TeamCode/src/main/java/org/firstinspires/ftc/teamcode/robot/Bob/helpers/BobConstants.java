@@ -5,6 +5,11 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class BobConstants {
 
+    // ==================== SAVING AUTO POSITION ====================
+    public static double LAST_X = 0;
+    public static double LAST_Y = 0;
+    public static double LAST_HEADING = 0;
+
 
     // ==================== SHOOTER ====================
     public static double TICKS_PER_REV_SHOOTER = 28;
