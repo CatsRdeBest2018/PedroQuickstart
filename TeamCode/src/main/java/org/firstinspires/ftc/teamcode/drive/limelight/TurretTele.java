@@ -104,7 +104,8 @@ public class TurretTele extends OpMode {
         if (result != null && result.isValid()) {
             bob.turretController.update(result.getTx());
             if (Math.abs(result.getTx()) < 0.5){
-                updatePose(result.getTy());
+//                updatePose(result.getTy())
+                updatePose2(result.getBotposeAvgDist());
             }
 
         } else {
@@ -117,6 +118,31 @@ public class TurretTele extends OpMode {
         try {
             Pose currentFollowerPose = follower.getPose();
             double distanceFromTag = heightDif / Math.tan(Math.toRadians(ty));
+            double trueAngle = 90-Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
+            trueAngle = Math.toRadians(trueAngle);
+            telemetry.addLine("limelight distance to target: " + distanceFromTag);
+            telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
+            telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
+            telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
+            telemetry.addLine("TRUE turret angle: " + trueAngle);
+            if (trueAngle != 90) {
+                double visionY = Math.sin(trueAngle) * distanceFromTag;
+                double visionX = Math.cos(trueAngle) * distanceFromTag;
+                visionX = 127.628 - visionX;
+                visionY = 131.669 - visionY;
+                double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
+                double finalY = currentFollowerPose.getY() + KALMAN_TURRET * (visionY - currentFollowerPose.getY());
+                follower.setPose(new Pose(finalX, finalY, currentFollowerPose.getHeading()));
+            }
+        }
+        catch (Exception e) {
+            telemetry.addData("Limelight error", e.getMessage());
+        }
+    }
+    private void updatePose2(double dist){
+        try {
+            Pose currentFollowerPose = follower.getPose();
+            double distanceFromTag = dist;
             double trueAngle = Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
             trueAngle = Math.toRadians(trueAngle);
             telemetry.addLine("limelight distance to target: " + distanceFromTag);
