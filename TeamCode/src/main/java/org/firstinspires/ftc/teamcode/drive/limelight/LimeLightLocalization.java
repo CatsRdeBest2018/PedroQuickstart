@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 
 
 @Configurable
@@ -33,14 +34,14 @@ public class LimeLightLocalization extends OpMode {
     GoBildaPinpointDriver pinpoint;
 
     public static int wait = 5;
-    public static double startX = 108.939;
-    public static double startY = 137.322;
-    public static double startHeadingDeg = 270;
+    public static double startX = 63.08466819221969;
+    public static double startY = 39.304347826086975;
+    public static double startHeadingDeg = 90;
 
     public void drawCurrent() {
         try {
-//            Drawing.drawRobot(follower.getPose());
-//            Drawing.sendPacket();
+            Drawing.drawRobot(follower.getPose());
+            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
