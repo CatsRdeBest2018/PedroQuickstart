@@ -155,6 +155,8 @@ public class LimeLightLocalization extends OpMode {
                     double PxInches = LPxInches+72;
                     double PyInches = -LPyInches+72;
 
+                    telemetry.addData("MT2 Location (in): ", "(" + LPxInches + ", " + LPyInches + ", " + z + ")");
+
                     boolean clearView = true;
 
                     if (lastRelocalized.seconds() >= wait) {
