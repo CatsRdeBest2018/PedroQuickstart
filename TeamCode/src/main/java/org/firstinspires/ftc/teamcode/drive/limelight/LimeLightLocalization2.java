@@ -46,12 +46,6 @@ public class LimeLightLocalization2 extends OpMode {
     // max distance to relocalize to
     public static double maxJumpIn = 24.0;
 
-    // max image capture delay
-    public static double maxLatencyMs = 1400.0;
-
-    // pose history update interval
-    public static double poseHistoryDtMs = 50.0;
-
     // field conversion shi
     public static double limelightYawOffsetDeg = 90.0;
     public static double fieldHalfIn = 72.0;
@@ -138,7 +132,7 @@ public class LimeLightLocalization2 extends OpMode {
         telemetry.addData("ppYaw (deg)", ppYawDeg);
         telemetry.addData("pedroYaw (deg)", pedroYawDeg);
 
-        limelight.updateRobotOrientation(pedroYawDeg + limelightYawOffsetDeg);
+        limelight.updateRobotOrientation(ppYawDeg + limelightYawOffsetDeg);
 
         // Read Limelight result
         LLResult result = limelight.getLatestResult();
@@ -163,103 +157,40 @@ public class LimeLightLocalization2 extends OpMode {
                 
                 // if you can relocalize
                 boolean okTime = (waitSeconds <= 0.0) || (lastRelocalized.seconds() >= waitSeconds);
-
-                // total delay time
-                double captureLatencyMs = result.getCaptureLatency();
-                double targetingLatencyMs = result.getTargetingLatency();
-                double parseLatencyMs = result.getParseLatency();
-                double stalenessMs = result.getStaleness();
-
-                double captureLatencyUsedMs = Double.isFinite(captureLatencyMs) ? captureLatencyMs : 0.0;
-                double targetingLatencyUsedMs = Double.isFinite(targetingLatencyMs) ? targetingLatencyMs : 0.0;
-                double parseLatencyUsedMs = Double.isFinite(parseLatencyMs) ? parseLatencyMs : 0.0;
-                double stalenessUsedMs = Double.isFinite(stalenessMs) ? stalenessMs : 0.0;
-                double totalLatencyMs = captureLatencyUsedMs + targetingLatencyUsedMs + parseLatencyUsedMs + stalenessUsedMs;
-
-                telemetry.addData("LL capture latency (ms)", String.format("%.0f", captureLatencyMs));
-                telemetry.addData("LL targeting latency (ms)", String.format("%.0f", targetingLatencyMs));
-                telemetry.addData("LL parse latency (ms)", String.format("%.0f", parseLatencyMs));
-                telemetry.addData("LL staleness (ms)", String.format("%.0f", stalenessMs));
-                telemetry.addData("LL total latency (ms)", String.format("%.0f", totalLatencyMs));
-                
-                // if delay time is ok
-                boolean captureFinite = Double.isFinite(captureLatencyMs);
-                boolean targetingFinite = Double.isFinite(targetingLatencyMs);
-                boolean parseFinite = Double.isFinite(parseLatencyMs);
-                boolean stalenessFinite = Double.isFinite(stalenessMs);
-                boolean latencyComponentsFinite = captureFinite && targetingFinite && parseFinite && stalenessFinite;
-
-                boolean okLatency = totalLatencyMs >= 0 && totalLatencyMs <= maxLatencyMs;
-
-                boolean canCorrect = okTime && okLatency;
+                boolean canCorrect = okTime;
                 String rejectReason = null;
 
                 if (!okTime) {
                     rejectReason = String.format("waiting %.2f/%.2f s", lastRelocalized.seconds(), waitSeconds);
-                } else if (!okLatency) {
-                    rejectReason = "latency too high for history buffer";
                 }
 
                 if (canCorrect) {
-                    // check pos at past time
-                    double[] hx = follower.getPoseHistory().getXPositionsArray();
-                    double[] hy = follower.getPoseHistory().getYPositionsArray();
-                    if (hx == null || hy == null || hx.length == 0 || hy.length == 0) {
-                        canCorrect = false;
-                        rejectReason = "pose history unavailable";
+                    Pose cur = follower.getPose();
+                    double dx = visionX - cur.getX();
+                    double dy = visionY - cur.getY();
+                    double jump = Math.hypot(dx, dy);
+
+                    telemetry.addData("Vision delta (in)",
+                            String.format("(dx=%.1f, dy=%.1f) jump=%.1f", dx, dy, jump));
+
+                    // if jump not too big
+                    if (jump <= maxJumpIn) {
+                        // Apply correction to the current pose (blended)
+                        double newX = cur.getX() + kVision * dx;
+                        double newY = cur.getY() + kVision * dy;
+
+                        follower.setPose(new Pose(newX, newY, cur.getHeading()));
+                        lastRelocalized.reset();
+
+                        telemetry.addData("Vision applied",
+                                String.format("k=%.2f -> (%.2f, %.2f)", kVision, newX, newY));
                     } else {
-                        // estimate average pos between pos type
-                        int maxIndex = Math.min(hx.length, hy.length) - 1;
-
-                        double idx = totalLatencyMs / poseHistoryDtMs;
-                        int i0 = (int) Math.floor(idx);
-                        int i1 = i0 + 1;
-                        if (i0 < 0) i0 = 0;
-                        if (i0 > maxIndex) i0 = maxIndex;
-                        if (i1 < 0) i1 = 0;
-                        if (i1 > maxIndex) i1 = maxIndex;
-                        double frac = idx - Math.floor(idx);
-                        if (frac < 0) frac = 0;
-                        if (frac > 1) frac = 1;
-
-                        double pastX = hx[i0] * (1.0 - frac) + hx[i1] * frac;
-                        double pastY = hy[i0] * (1.0 - frac) + hy[i1] * frac;
-
-                        // Error at capture time
-                        double dxPast = visionX - pastX;
-                        double dyPast = visionY - pastY;
-                        double jump = Math.hypot(dxPast, dyPast);
-
-                        telemetry.addData("History idx", String.format("idx=%.2f i0=%d i1=%d frac=%.2f", idx, i0, i1, frac));
-                        telemetry.addData("Past pose (in)", String.format("(%.1f, %.1f)", pastX, pastY));
-                        telemetry.addData("Vision delta@past (in)",
-                                String.format("(dx=%.1f, dy=%.1f) jump=%.1f", dxPast, dyPast, jump));
-                        
-                        // if jump not too big
-                        if (jump <= maxJumpIn) {
-                            // Apply correction to the current pose (blended)
-                            Pose cur = follower.getPose();
-                            double newX = cur.getX() + kVision * dxPast;
-                            double newY = cur.getY() + kVision * dyPast;
-
-                            follower.setPose(new Pose(newX, newY, cur.getHeading()));
-                            lastRelocalized.reset();
-
-                            telemetry.addData("Vision applied",
-                                    String.format("k=%.2f -> (%.2f, %.2f)", kVision, newX, newY));
-                        } else {
-                            canCorrect = false;
-                            rejectReason = String.format("jump %.1f > %.1f", jump, maxJumpIn);
-                        }
+                        canCorrect = false;
+                        rejectReason = String.format("jump %.1f > %.1f", jump, maxJumpIn);
                     }
                 }
                 if (!canCorrect && rejectReason != null) {
                     telemetry.addData("Vision rejected", rejectReason);
-                }
-                if (!latencyComponentsFinite) {
-                    telemetry.addData("LL latency finite",
-                            String.format("cap=%b targ=%b parse=%b stale=%b",
-                                    captureFinite, targetingFinite, parseFinite, stalenessFinite));
                 }
             } else {
                 telemetry.addData("Botpose_MT2", "NULL - Check pipeline configuration");
