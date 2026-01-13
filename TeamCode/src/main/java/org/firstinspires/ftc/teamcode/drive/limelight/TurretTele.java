@@ -8,6 +8,8 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -27,7 +29,7 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 @TeleOp
 public class TurretTele extends OpMode {
     Bob bob = new Bob();
-
+    TelemetryManager telemetryM;
     private final double cameraHeight = 10.76; // inches
     private final double tagHeight = 29.5; // inches
     private final double heightDif = tagHeight-cameraHeight;
@@ -49,6 +51,7 @@ public class TurretTele extends OpMode {
     @Override
     // runs on init press
     public void init() {
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         startPose = new Pose(LAST_X,LAST_Y,LAST_HEADING);
 
 
@@ -85,6 +88,9 @@ public class TurretTele extends OpMode {
 
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+        telemetryM.debug("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+
+        telemetryM.update();
 
      //   Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
