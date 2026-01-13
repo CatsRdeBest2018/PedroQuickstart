@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.limelight;
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -53,6 +54,9 @@ public class LimeLightLocalization extends OpMode {
     @Override
     // runs on init press
     public void init() {
+
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+
         // define and init robot
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("fl");
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("bl");
