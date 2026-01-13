@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 
 
@@ -39,8 +40,8 @@ public class TurretTele extends OpMode {
 
     public void drawCurrent() {
         try {
-//            Drawing.drawRobot(follower.getPose());
-//            Drawing.sendPacket();
+            Drawing.drawRobot(follower.getPose());
+            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -79,14 +80,12 @@ public class TurretTele extends OpMode {
     // loops after start
     // press
     public void loop() {
-       // pinpoint.update();
         follower.update();
-
 
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
-     //   Drawing.drawPoseHistory(follower.getPoseHistory());
+        Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 
