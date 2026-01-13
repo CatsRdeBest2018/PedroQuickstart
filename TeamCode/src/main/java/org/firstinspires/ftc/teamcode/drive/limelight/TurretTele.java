@@ -22,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 
 
@@ -41,8 +42,8 @@ public class TurretTele extends OpMode {
 
     public void drawCurrent() {
         try {
-//            Drawing.drawRobot(follower.getPose());
-//            Drawing.sendPacket();
+            Drawing.drawRobot(follower.getPose());
+            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -82,9 +83,7 @@ public class TurretTele extends OpMode {
     // loops after start
     // press
     public void loop() {
-       // pinpoint.update();
         follower.update();
-
 
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
@@ -92,7 +91,7 @@ public class TurretTele extends OpMode {
 
         telemetryM.update();
 
-     //   Drawing.drawPoseHistory(follower.getPoseHistory());
+        Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 
@@ -116,8 +115,8 @@ public class TurretTele extends OpMode {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             bob.turretController.update(result.getTx());
-            if (Math.abs(result.getTx()) < 0.5){
-             //   updatePose(result.getTy());
+            if (Math.abs(result.getTx()) < 0.5) {
+               // updatePose(result.getTy());
                // updatePose2(result.getBotposeAvgDist());
                 updatePose3(result.getBotposeAvgDist());
             }
