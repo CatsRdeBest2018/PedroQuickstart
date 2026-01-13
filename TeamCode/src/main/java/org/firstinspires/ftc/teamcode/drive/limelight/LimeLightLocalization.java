@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.limelight;
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -31,6 +32,9 @@ public class LimeLightLocalization extends OpMode {
 
     private Follower follower;
     GoBildaPinpointDriver pinpoint;
+
+    TelemetryManager telemetryM;
+
 
     public static int wait = 5;
     public static double startX = 63.08466819221969;
@@ -96,6 +100,9 @@ public class LimeLightLocalization extends OpMode {
 
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+        telemetryM.debug("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+
+        telemetryM.update();
 
         //Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
