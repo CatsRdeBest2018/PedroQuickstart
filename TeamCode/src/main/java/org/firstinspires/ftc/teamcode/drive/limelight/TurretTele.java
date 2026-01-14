@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 public class TurretTele extends OpMode {
     Bob bob = new Bob();
     TelemetryManager telemetryM;
+    private final double cameraDistFromCenter = 3.6875;
     private final double cameraHeight = 10.76; // inches
     private final double tagHeight = 29.5; // inches
     private final double heightDif = tagHeight-cameraHeight;
@@ -44,6 +45,8 @@ public class TurretTele extends OpMode {
         try {
 //            Drawing.drawRobot(follower.getPose());
 //            Drawing.sendPacket();
+           // Drawing.drawRobot(follower.getPose());
+            //Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -92,6 +95,7 @@ public class TurretTele extends OpMode {
         telemetryM.update();
 
 //        Drawing.drawPoseHistory(follower.getPoseHistory());
+      //  Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 
@@ -190,10 +194,12 @@ public class TurretTele extends OpMode {
             telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
             telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
             telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
-            telemetry.addLine("TRUE turret angle: " + trueAngle);
+            telemetry.addLine("TRUE turret angle: " + Math.toDegrees(trueAngle));
             if (Math.toDegrees(trueAngle) != 90) {
                 double visionY = Math.sin(trueAngle) * distanceFromTag;
                 double visionX = Math.cos(trueAngle) * distanceFromTag;
+                visionX += Math.cos(trueAngle)*cameraDistFromCenter;
+                visionY += Math.sin(trueAngle)*cameraDistFromCenter;
                 visionX = 127.628 - visionX;
                 visionY = 131.669 - visionY;
                 double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
