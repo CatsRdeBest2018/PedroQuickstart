@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 
 
 @Configurable
@@ -46,8 +47,8 @@ public class LimeLightLocalization extends OpMode {
 
     public void drawCurrent() {
         try {
-           // Drawing.drawRobot(follower.getPose());
-           // Drawing.sendPacket();
+            Drawing.drawRobot(follower.getPose());
+            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -110,7 +111,7 @@ public class LimeLightLocalization extends OpMode {
 
         telemetryM.update();
 
-        //Drawing.drawPoseHistory(follower.getPoseHistory());
+        Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 //       if (gamepad2.start || gamepad1.start) return;
@@ -161,6 +162,8 @@ public class LimeLightLocalization extends OpMode {
 
                     double PxInches = convertedPose.getX();
                     double PyInches = convertedPose.getY();
+
+                    telemetry.addData("MT2 Location (inches converted pedro):", "(" + PxInches + ", " + PyInches + ", " + z + ")");
 
                     boolean clearView = true;
 
