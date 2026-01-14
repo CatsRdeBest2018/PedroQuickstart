@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 
 @Configurable
 @TeleOp
@@ -56,8 +57,8 @@ public class LimeLightLocalization2 extends OpMode {
 
     public void drawCurrent() {
         try {
-            //Drawing.drawRobot(follower.getPose());
-           // Drawing.sendPacket();
+            Drawing.drawRobot(follower.getPose());
+            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -110,7 +111,7 @@ public class LimeLightLocalization2 extends OpMode {
                 String.format("x=%.2f in, y=%.2f in, h=%.1f deg",
                         currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
-        //Drawing.drawPoseHistory(follower.getPoseHistory());
+        Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
         // Driver control
@@ -131,7 +132,7 @@ public class LimeLightLocalization2 extends OpMode {
         telemetry.addData("ppYaw (deg)", ppYawDeg);
         telemetry.addData("pedroYaw (deg)", pedroYawDeg);
 
-        limelight.updateRobotOrientation(ppYawDeg + limelightYawOffsetDeg);
+        limelight.updateRobotOrientation(pedroYawDeg + limelightYawOffsetDeg);
 
         // Read Limelight result
         LLResult result = limelight.getLatestResult();

@@ -12,13 +12,14 @@ import com.pedropathing.util.PoseHistory;
 
 public class Drawing {
     public static final double ROBOT_RADIUS = 9; // woah
+    public static final double ROBOT_OUTLINE_RADIUS = 12;
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
 
     private static final Style robotLook = new Style(
-            "", "#3F51B5", 0.0
+            "", "#3F51B5", 2.0
     );
     private static final Style historyLook = new Style(
-            "", "#4CAF50", 0.0
+            "", "#4CAF50", 2.0
     );
 
     /**
@@ -61,6 +62,7 @@ public class Drawing {
         panelsField.setStyle(style);
         panelsField.moveCursor(pose.getX(), pose.getY());
         panelsField.circle(ROBOT_RADIUS);
+        panelsField.circle(ROBOT_OUTLINE_RADIUS);
 
         Vector v = pose.getHeadingAsUnitVector();
         v.setMagnitude(v.getMagnitude() * ROBOT_RADIUS);
