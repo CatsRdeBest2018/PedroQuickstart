@@ -6,6 +6,8 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -145,6 +147,7 @@ public class LimeLightLocalization extends OpMode {
                 double z = botpose_mt2.getPosition().z;
 
                 telemetry.addData("MT2 Location:", "(" + a + ", " + b + ", " + z + ")");
+                telemetry.addData("MT2 Location (inches):", "(" + a * 39.3701 + ", " + b * 39.3701 + ", " + z + ")");
 
                 try {
                     Pose currentFollowerPose = follower.getPose();
@@ -152,10 +155,12 @@ public class LimeLightLocalization extends OpMode {
                     double LPxInches = a * 39.3701;
                     double LPyInches = b * 39.3701;
 
-                    double PxInches = LPxInches+72;
-                    double PyInches = -LPyInches+72;
+                    Pose convertedPose = new Pose(LPxInches, LPyInches, 0, FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+//                    double PxInches = LPxInches+72;
+//                    double PyInches = -LPyInches+72;
 
-                    telemetry.addData("MT2 Location (in): ", "(" + LPxInches + ", " + LPyInches + ", " + z + ")");
+                    double PxInches = convertedPose.getX();
+                    double PyInches = convertedPose.getY();
 
                     boolean clearView = true;
 

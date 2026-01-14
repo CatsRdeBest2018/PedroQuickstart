@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
+//import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 
 
@@ -42,8 +42,8 @@ public class TurretTele extends OpMode {
 
     public void drawCurrent() {
         try {
-            Drawing.drawRobot(follower.getPose());
-            Drawing.sendPacket();
+//            Drawing.drawRobot(follower.getPose());
+//            Drawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -91,7 +91,7 @@ public class TurretTele extends OpMode {
 
         telemetryM.update();
 
-        Drawing.drawPoseHistory(follower.getPoseHistory());
+//        Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 
