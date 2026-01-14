@@ -23,7 +23,8 @@ public class Constants {
             .mass(11.97)
             .forwardZeroPowerAcceleration(-37)
             .lateralZeroPowerAcceleration(-63.8)
-
+        //    .forwardZeroPowerAcceleration(-60)
+          //  .lateralZeroPowerAcceleration(-90)
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)

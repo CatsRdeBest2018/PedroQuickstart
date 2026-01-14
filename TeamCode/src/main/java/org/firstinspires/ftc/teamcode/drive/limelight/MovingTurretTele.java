@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.drive.limelight;
 
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_X;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_Y;
 
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -22,12 +27,13 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 @TeleOp
 public class MovingTurretTele extends OpMode {
     Bob bob = new Bob();
-
+    TelemetryManager telemetryM;
     private double targetAngle = 0;
     private double distanceToTarget = 0;
     private double horiVeliToTarget = 0;
     private double veliTowardTarget = 0;
     private double difX = 0;
+    private final double cameraDistFromCenter = 3.6875;
     private double difY = 0;
     private double targetX = 134.64543889845095;
     private double targetY = 139.24612736660927;
@@ -44,7 +50,7 @@ public class MovingTurretTele extends OpMode {
     private Follower follower;
     GoBildaPinpointDriver pinpoint;
 
-
+    private Pose startPose;
     public static double startX = 108.939;
     public static double startY = 137.322;
     public static double startHeadingDeg = 270;
@@ -61,6 +67,7 @@ public class MovingTurretTele extends OpMode {
     @Override
     // runs on init press
     public void init() {
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         bob.init(hardwareMap);
         // define and init robot
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -71,9 +78,11 @@ public class MovingTurretTele extends OpMode {
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.pipelineSwitch(0); // Switch to pipeline number 0
 
+        startPose = new Pose(LAST_X,LAST_Y,LAST_HEADING);
+
+
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(startX, startY, Math.toRadians(startHeadingDeg)));
-        follower.update();
+        follower.setStartingPose(startPose);
 
     }
 
@@ -95,8 +104,6 @@ public class MovingTurretTele extends OpMode {
 
         Pose currentPose = follower.getPose();
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
-
-        //Drawing.drawPoseHistory(follower.getPoseHistory());
         drawCurrent();
 
 
@@ -122,7 +129,7 @@ public class MovingTurretTele extends OpMode {
         if (result != null && result.isValid()) {
             bob.turretController.update(result.getTx());
             if (Math.abs(result.getTx()) < 0.5){
-                updatePose(result.getTy());
+                updatePose3(result.getBotposeAvgDist());
             }
 
         } else {
@@ -130,30 +137,34 @@ public class MovingTurretTele extends OpMode {
         }
 
         telemetry.update();
+        telemetryM.update();
     }
-    private void updatePose(double ty){
+    private void updatePose3(double dist){
+        try {
             Pose currentFollowerPose = follower.getPose();
-            double distanceFromTag = heightDif / Math.tan(Math.toRadians(ty));
+            double distanceFromTag = Math.sqrt(((dist*39.3701)*(dist*39.3701))- (heightDif*heightDif));
             double trueAngle = Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
             trueAngle = Math.toRadians(trueAngle);
-        telemetry.addLine("limelight distance to target: " + distanceFromTag);
-        telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
-        telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
-        telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
-        telemetry.addLine("TRUE turret angle: " + trueAngle);
-
-            if (trueAngle != 90) {
+            telemetryM.debug("limelight distance to target: " + distanceFromTag);
+            // telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
+            // telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
+            //  telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
+            // telemetry.addLine("TRUE turret angle: " + Math.toDegrees(trueAngle));
+            if (Math.toDegrees(trueAngle) != 90) {
                 double visionY = Math.sin(trueAngle) * distanceFromTag;
                 double visionX = Math.cos(trueAngle) * distanceFromTag;
+                visionX += Math.cos(trueAngle)*cameraDistFromCenter;
+                visionY += Math.sin(trueAngle)*cameraDistFromCenter;
                 visionX = 127.628 - visionX;
                 visionY = 131.669 - visionY;
                 double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
                 double finalY = currentFollowerPose.getY() + KALMAN_TURRET * (visionY - currentFollowerPose.getY());
                 follower.setPose(new Pose(finalX, finalY, currentFollowerPose.getHeading()));
-
             }
-
-
+        }
+        catch (Exception e) {
+            telemetry.addData("Limelight error", e.getMessage());
+        }
     }
     private void updateTargetAngle(){
         xPos = follower.getPose().getX();
@@ -173,6 +184,9 @@ public class MovingTurretTele extends OpMode {
         telemetry.addLine("yVel: " + yVel);
         telemetry.addLine("sideways velocity to target: " + horiVeliToTarget);
         telemetry.addLine("target angle: " + targetAngle);
+
+        telemetryM.debug("sideways velocity to target: " + horiVeliToTarget);
+        telemetryM.debug("target angle: " + targetAngle);
 
     }
 }

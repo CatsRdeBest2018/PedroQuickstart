@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 public class TurretTele extends OpMode {
     Bob bob = new Bob();
     TelemetryManager telemetryM;
+    private double odoDistance = 0;
     private final double cameraDistFromCenter = 3.6875;
     private final double cameraHeight = 10.76; // inches
     private final double tagHeight = 29.5; // inches
@@ -92,6 +93,8 @@ public class TurretTele extends OpMode {
         telemetry.addData("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
         telemetryM.debug("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
+        odoDistance = Math.sqrt(Math.pow((127.628 - follower.getPose().getX()),2)+Math.pow((131.669 - follower.getPose().getY()),2));
+        telemetryM.debug("odo distance to target: " + odoDistance);
         telemetryM.update();
 
 //        Drawing.drawPoseHistory(follower.getPoseHistory());
@@ -190,11 +193,11 @@ public class TurretTele extends OpMode {
             double distanceFromTag = Math.sqrt(((dist*39.3701)*(dist*39.3701))- (heightDif*heightDif));
             double trueAngle = Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
             trueAngle = Math.toRadians(trueAngle);
-            telemetry.addLine("limelight distance to target: " + distanceFromTag);
-            telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
-            telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
-            telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
-            telemetry.addLine("TRUE turret angle: " + Math.toDegrees(trueAngle));
+            telemetryM.debug("limelight distance to target: " + distanceFromTag);
+           // telemetry.addLine("RELATIVE turret angle: " + bob.turretController.getTurretAngle());
+           // telemetry.addLine("RELATIVE turret ticks: " + bob.turretController.getTurretTicks());
+          //  telemetry.addLine("pinpoint angle: " + Math.toDegrees(follower.getHeading()));
+           // telemetry.addLine("TRUE turret angle: " + Math.toDegrees(trueAngle));
             if (Math.toDegrees(trueAngle) != 90) {
                 double visionY = Math.sin(trueAngle) * distanceFromTag;
                 double visionX = Math.cos(trueAngle) * distanceFromTag;
