@@ -55,6 +55,8 @@ public class RobotTele extends OpMode{
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
+
+
         if (gamepad1.right_trigger != 0) {
             double power = (1 - gamepad1.right_trigger);
             bot.leftFront.setPower(Math.max(power, 0.45) * frontLeftPower);
