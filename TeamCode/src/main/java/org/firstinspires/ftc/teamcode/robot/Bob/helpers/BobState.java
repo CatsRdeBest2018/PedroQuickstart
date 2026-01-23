@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.Bob.helpers;
 
 public class BobState {
     public Integer shooterRPM;
-    public Double spindexerAngle;
-    public Boolean spindexerAbsolute;  // ADD THIS - true = set absolute, false/null = increment
-    public Double transferPosition;
     public Double intakePower;
     public LinkedState linkedState;
 
@@ -15,9 +12,6 @@ public class BobState {
                     Double intakePower,
                     LinkedState linkedState) {
         this.shooterRPM = shooterRPM;
-        this.spindexerAngle = spindexerAngle;
-        this.spindexerAbsolute = spindexerAbsolute;  // ADD THIS
-        this.transferPosition = transferPosition;
         this.intakePower = intakePower;
         this.linkedState = linkedState;
     }

@@ -69,9 +69,9 @@ public class GrabLastPosition extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
 
-        bob.follower = follower;
 
-        bob.init(hardwareMap, false);
+
+        bob.init(hardwareMap);
     }
 
     public void init_loop() {
@@ -90,35 +90,19 @@ public class GrabLastPosition extends OpMode {
 
         follower.update();
         Pose currentPose = follower.getPose();
-        telemetryM.debug("c1: "+ bob.c.getDistance(DistanceUnit.MM));
-        telemetryM.debug("c2: "+ bob.c2.getDistance(DistanceUnit.MM));
-        telemetryM.debug("c3: "+ bob.c3.getDistance(DistanceUnit.MM));
+
         telemetryM.debug("Pedro Pose:  "+String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
 
 
         telemetryM.update(telemetry);
 
 
-        drive();
+
         bob.tick();
         gamepadUpdate();
     }
 
-    private void drive(){
-        if (!gamepad1.right_bumper && gamepad1.right_trigger <= 0.1 && gamepad1.left_trigger<=0.1) {
-            // normal driving
-            bob.motorDriveXYVectors(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-        }
-        else if (gamepad1.right_bumper && gamepad1.left_trigger <= 0.1) {
-            // slow
-            bob.motorDriveXYVectors(0.85 * gamepad1.left_stick_x, 0.85 * -gamepad1.left_stick_y, 0.4 * gamepad1.right_stick_x);
-        }
-        else if (gamepad1.left_trigger >= 0.1) {
-            // slow
-            bob.motorDriveXYVectors(0.3 * gamepad1.left_stick_x, 0.3 * -gamepad1.left_stick_y, 0.3 * gamepad1.right_stick_x);
-        }
 
-    }
 
 
     private void gamepadUpdate(){

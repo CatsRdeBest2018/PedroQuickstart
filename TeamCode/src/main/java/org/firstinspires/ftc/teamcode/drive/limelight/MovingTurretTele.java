@@ -107,12 +107,7 @@ public class MovingTurretTele extends OpMode {
         drawCurrent();
 
 
-        if (!gamepad1.right_bumper && gamepad1.right_trigger <= 0.1) {
-            bob.motorDriveXYVectors(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x);
-        }
-        else if (gamepad1.right_bumper) {
-            bob.motorDriveXYVectors(0.7 * -gamepad1.left_stick_x, 0.7 * gamepad1.left_stick_y, 0.3 * -gamepad1.right_stick_x);
-        }
+
         double ppYaw = pinpoint.getHeading(AngleUnit.DEGREES);
 
 //        telemetry.addData("ppYaw", ppYaw);

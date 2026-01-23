@@ -33,7 +33,10 @@ public class BobConstants {
     public static double tI = 0;
     public static double tD = 0;
     public static double tF = 0;
+    public static double DISTANCE_FROM_TARGET = 0;
 
+    // ==================== HOOD CONTROL ====================
+    public static double HOOD_STARTING_POS = 0;
 
     // ==================== SPINDEXER ====================
     public static double TICKS_PER_REV_SPINDEXER = 8192;
