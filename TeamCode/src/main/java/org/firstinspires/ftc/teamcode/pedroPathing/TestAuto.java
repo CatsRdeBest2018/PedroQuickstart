@@ -95,7 +95,7 @@ public class TestAuto extends OpMode {
     public void start() {
         opmodeTimer.resetTimer();
         setPathState(0);
-        bob.transferController.setDown();
+
 
 
     }
