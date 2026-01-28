@@ -69,7 +69,7 @@ public class StatesTestIntake extends OpMode {
     public PathChain park;
     public PathChain ramPath;
 
-    // NEW: single slow “creep” paths that cover all 3 spike balls without stopping
+
     public PathChain SpikeCreep1; // (95,83.692) -> (125,83.692)
     public PathChain SpikeCreep2; // (95,60.0)   -> (130,55)
 
@@ -263,13 +263,6 @@ public class StatesTestIntake extends OpMode {
         }
     }
 
-    /**
-     * NEW intake behavior:
-     * - Start one slow creep path through 3 balls
-     * - Use bob.isBall() (distance sensor logic inside Bob) exactly like before
-     * - Fire macros (SPINDEXER_RIGHT) when ball detected (or timeout), WITHOUT waiting for follower to finish
-     * - Keep your “waitSpike(.5)” + spindexer consts behavior (doesn't require stopping motion)
-     */
     public void intakeSpikeMarks() {
         switch (intakeState) {
             case 0:
@@ -282,7 +275,7 @@ public class StatesTestIntake extends OpMode {
                 break;
 
             case 1:
-                // First ball while moving
+
                 if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
                     bob.runMacro(SPINDEXER_RIGHT);
                     setI(2);
@@ -290,13 +283,13 @@ public class StatesTestIntake extends OpMode {
                 break;
 
             case 2:
-                // Keep original behavior: reset spindexer PID back to normal, then small delay
+
                 bob.spindexerController.setConsts(SPINDEX_KP, SPINDEX_KI, SPINDEX_KD);
                 waitSpike(.5);
                 break;
 
             case 3:
-                // Second ball while moving
+
                 if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
                     bob.runMacro(SPINDEXER_RIGHT);
                     setI(5);
@@ -304,13 +297,13 @@ public class StatesTestIntake extends OpMode {
                 break;
 
             case 5:
-                // Same as original: consts + delay
+
                 bob.spindexerController.setConsts(SPINDEX_KP, SPINDEX_KI, SPINDEX_KD);
                 waitSpike(.5);
                 break;
 
             case 6:
-                // Third ball while moving
+
                 if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
                     bob.runMacro(SPINDEXER_RIGHT);
                     setI(7);
@@ -318,7 +311,7 @@ public class StatesTestIntake extends OpMode {
                 break;
 
             case 7:
-                // Finish: stop intake and move on to next major state
+
                 bob.intakeController.stopIntake();
                 if (isSpike1) {
                     pathState = 7;
@@ -371,7 +364,7 @@ public class StatesTestIntake extends OpMode {
 
             case 5:
             case 14:
-                // NOTE: This now creeps through all 3 balls without stopping
+
                 intakeSpikeMarks();
                 break;
 
