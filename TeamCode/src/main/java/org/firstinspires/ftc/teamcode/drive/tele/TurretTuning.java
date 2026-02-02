@@ -67,7 +67,7 @@ public class TurretTuning extends OpMode {
         bob.turretController.setTurretConsts();
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
-            bob.turretController.update(result.getTx());
+            bob.turretController.update(-result.getTx());
         }
 
         telemetry.update();
