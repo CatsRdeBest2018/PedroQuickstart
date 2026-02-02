@@ -142,6 +142,7 @@ public class Bob extends Meccanum implements Robot {
         intakeController.intakeTick();
         transferController.transferTick();
         proximityController.proximityTick();
+        spindexerController.spindexerTick();
         newShooterController.update();
     }
     public void updateLight(int n) {

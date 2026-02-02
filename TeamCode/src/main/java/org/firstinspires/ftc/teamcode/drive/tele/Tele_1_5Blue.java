@@ -77,6 +77,7 @@ public class Tele_1_5Blue extends OpMode {
     private Supplier<PathChain> pathChain;
     private boolean automatedDrive = false;
 
+    private boolean toggleConsts = false;
     @Override
     public void init() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -197,6 +198,17 @@ public class Tele_1_5Blue extends OpMode {
         if (gamepad2.dpad_left && !lastGamepad2.dpad_left) bob.runMacro(SPINDEXER_LEFT);
         // spin 60
         if (gamepad2.dpad_up && !lastGamepad2.dpad_up) bob.runMacro(SPINDEXER_SIXTY);
+
+        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
+            if (toggleConsts) {
+                bob.spindexerController.setConsts(SPINDEX_KP,SPINDEX_KI,SPINDEX_KD);
+                toggleConsts = false;
+            } else {
+                bob.spindexerController.setConsts(SPINDEX_KP_A,SPINDEX_KI_A,SPINDEX_KD_A);
+                toggleConsts = true;
+            }
+
+        }
 
     }
     private void autoControl(){
