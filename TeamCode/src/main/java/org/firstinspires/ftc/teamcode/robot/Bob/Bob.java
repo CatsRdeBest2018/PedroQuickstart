@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.helpers.PIDFShooter;
 import org.firstinspires.ftc.teamcode.helpers.PIDFTurret;
+import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure;
 import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobState;
 import org.firstinspires.ftc.teamcode.robot.Bob.helpers.Link;
 
@@ -27,7 +28,6 @@ public class Bob implements Robot {
     public ShooterController shooterController = new ShooterController();
     public TurretController turretController = new TurretController();
     public HoodController hoodController = new HoodController();
-
 
     public DcMotorEx intake;
     public DcMotorEx shooterRight;
@@ -92,7 +92,6 @@ public class Bob implements Robot {
     }
 
 
-// TODO: SHOOTER PID
 
     public class ShooterController {
         private PIDFShooter shootPID;
@@ -101,6 +100,9 @@ public class Bob implements Robot {
             shootPID.reset(0);
         }
 
+        public void configureConsts() {
+            shootPID.setConsts(BobConfigure.Shooter.P,BobConfigure.Shooter.I,BobConfigure.Shooter.D,BobConfigure.Shooter.F);
+        }
 
         public void update(){
             double currentTicks = (shooterLeft.getCurrentPosition() + shooterRight.getCurrentPosition()) / 2.0;
@@ -128,7 +130,7 @@ public class Bob implements Robot {
             return shootPID.getTargetRPM();
         }
     }
-    // TODO:  HOOD
+
     public class HoodController {
         public void start() {
             hood.setPosition(HOOD_STARTING_POS);
@@ -145,7 +147,6 @@ public class Bob implements Robot {
         }
     }
 
-    // TODO:  TURRET PIDF
     public class TurretController {
         private PIDFTurret turretPIDF;
         public void start() {
@@ -160,6 +161,11 @@ public class Bob implements Robot {
         }
         public void setTurretConsts(){
             turretPIDF.setConsts(tP,tI,tD,tF);
+        }
+        public void configureTurretConsts(){
+            turretPIDF.setConsts(
+                    BobConfigure.Turret.P,BobConfigure.Turret.I,BobConfigure.Turret.D,BobConfigure.Turret.F
+            );
         }
 
 
@@ -176,7 +182,6 @@ public class Bob implements Robot {
 
     }
 
-    // TODO: INTAKE
 
     public class IntakeController {
         private double intakePower = 0;
@@ -192,9 +197,11 @@ public class Bob implements Robot {
         public void intakeTick() {
             intake.setPower(intakePower);
         }
+        public void setIntake(double pow) {
+            intake.setPower(pow);
+        }
     }
 
-    // TODO: MACRO
 
     public BobState macroState = null;
     public boolean MACROING = false;

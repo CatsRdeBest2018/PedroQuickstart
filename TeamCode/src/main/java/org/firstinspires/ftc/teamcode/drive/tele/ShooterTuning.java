@@ -44,6 +44,7 @@ public class ShooterTuning extends OpMode {
         telemetryM.debug("Current RPM: "+bob.shooterController.getCurrentRPM());
         telemetryM.debug("Target RPM "+TARGET_RPM);
         telemetryM.update(telemetry);
+        //telemetryM.update();
         // set target rpm
         if (gamepad1.left_bumper) bob.shooterController.setRPMWithDistance(DISTANCE_FROM_TARGET);
         if (gamepad1.right_bumper) bob.shooterController.setRPM(TARGET_RPM);
