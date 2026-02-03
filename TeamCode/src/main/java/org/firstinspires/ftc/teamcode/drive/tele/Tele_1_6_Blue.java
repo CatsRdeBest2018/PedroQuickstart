@@ -7,7 +7,6 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -43,12 +42,11 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SPINDEXER_
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@TeleOp(name = "1.5 TeleOp (Red)")
-public class Tele_1_5 extends OpMode {
+@TeleOp(name = "States TeleOp (Blue)")
+public class Tele_1_6_Blue extends OpMode {
 
     TelemetryManager telemetryM;
     private final Bob bob = new Bob();
@@ -84,7 +82,7 @@ public class Tele_1_5 extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(7);
 
         rotationPID.init(0);
         rotationPID.setTarget(rotationTarget);
@@ -93,7 +91,7 @@ public class Tele_1_5 extends OpMode {
         macroTimer = new Timer();
 
         // pedro
-      //  startPose = Objects.requireNonNullElseGet(RobotContext.lastPose, () -> new Pose(95, 37, Math.toRadians(0)));
+        //  startPose = Objects.requireNonNullElseGet(RobotContext.lastPose, () -> new Pose(95, 37, Math.toRadians(0)));
         startPose = Objects.requireNonNullElseGet(null, () ->
                 new Pose(102.8923076923077, 66.21538461538462, Math.toRadians(-15)));
 
