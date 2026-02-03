@@ -474,7 +474,7 @@ public class Auto_1_4 extends OpMode {
         follower.update();
         autoMain();
         bob.tick();
-        if (shootingAllThree1) {
+        if (false) {
             Pose current = follower.getPose();
             Pose expected = new Pose(85, 85, Math.toRadians(45));
             double x = current.getX() - expected.getX();

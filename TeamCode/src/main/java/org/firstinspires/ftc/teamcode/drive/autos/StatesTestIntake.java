@@ -103,7 +103,7 @@ public class StatesTestIntake extends OpMode {
                         new BezierCurve(
                                 new Pose(85, 85), //(72, 72)
                                 new Pose(83.938, 82.708),
-                                new Pose(95, 83.692)
+                                new Pose(99, 83.692)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
@@ -113,7 +113,7 @@ public class StatesTestIntake extends OpMode {
                 .pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(95, 83.692),
+                                new Pose(99, 83.692),
                                 new Pose(107, 83.692)
                         )
                 )
@@ -267,7 +267,7 @@ public class StatesTestIntake extends OpMode {
         switch (intakeState) {
             case 0:
                 // Start creeping once
-                if (isSpike1) follower.followPath(SpikeCreep1, 0.30, true);
+                if (isSpike1) follower.followPath(SpikeCreep1, 0.25, true);
                 else follower.followPath(SpikeCreep2, 0.30, true);
 
                 actionTimer.resetTimer();
@@ -276,7 +276,7 @@ public class StatesTestIntake extends OpMode {
 
             case 1:
 
-                if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
+                if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > 1.5) {
                     bob.runMacro(SPINDEXER_RIGHT);
                     setI(2);
                 }
@@ -290,7 +290,7 @@ public class StatesTestIntake extends OpMode {
 
             case 3:
 
-                if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
+                if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > 1.5) {
                     bob.runMacro(SPINDEXER_RIGHT);
                     setI(5);
                 }
@@ -304,7 +304,7 @@ public class StatesTestIntake extends OpMode {
 
             case 6:
 
-                if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
+                if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > 1.5) {
                     bob.runMacro(SPINDEXER_RIGHT);
                     setI(7);
                 }
@@ -312,7 +312,7 @@ public class StatesTestIntake extends OpMode {
 
             case 7:
 
-                bob.intakeController.stopIntake();
+//                bob.intakeController.stopIntake();
                 if (isSpike1) {
                     pathState = 7;
                 } else {
@@ -492,7 +492,7 @@ public class StatesTestIntake extends OpMode {
         autoMain();
         bob.tick();
 
-        if (shootingAllThree1) {
+        if (false) {
             Pose current = follower.getPose();
             Pose expected = new Pose(85, 85, Math.toRadians(45));
             double x = current.getX() - expected.getX();
