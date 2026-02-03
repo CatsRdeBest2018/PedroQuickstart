@@ -30,6 +30,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.SPIN
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.SPINDEX_KI_A;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.SPINDEX_KP;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.SPINDEX_KP_A;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.TARGET_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOTER_OFF;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOTER_ZONE1;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOTER_ZONE1_MATIC;
@@ -122,11 +123,12 @@ public class Tele_1_6 extends OpMode {
 
         follower.update();
         Pose currentPose = follower.getPose();
-        telemetryM.debug("c1: "+ bob.c.getDistance(DistanceUnit.MM));
-        telemetryM.debug("c2: "+ bob.c2.getDistance(DistanceUnit.MM));
-        telemetryM.debug("c3: "+ bob.c3.getDistance(DistanceUnit.MM));
+//        telemetryM.debug("c1: "+ bob.c.getDistance(DistanceUnit.MM));
+//        telemetryM.debug("c2: "+ bob.c2.getDistance(DistanceUnit.MM));
+//        telemetryM.debug("c3: "+ bob.c3.getDistance(DistanceUnit.MM));
         telemetryM.debug("Pedro Pose:  "+String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
-
+        telemetryM.debug("Current RPM: "+bob.newShooterController.getCurrentRPM());
+        telemetryM.debug("Target RPM "+TARGET_RPM);
 
         telemetryM.update(telemetry);
 
@@ -144,7 +146,7 @@ public class Tele_1_6 extends OpMode {
         if (rotationCorrectionOn) {
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
-                currentAngle = Math.toRadians(result.getTx());
+                currentAngle = Math.toRadians(-result.getTx());
                 rotationPower = rotationPID.tick(currentAngle);
             } else {
                 rotationPower = 0;
