@@ -14,11 +14,7 @@ public class BobConstants {
     // ==================== SHOOTER ====================
     public static double TICKS_PER_REV_SHOOTER = 28;
     public static int RPM_ZONE1 = 2400;
-<<<<<<< HEAD
     public static int RPM_ZONE1_AUTO = 2450;
-=======
-    public static int RPM_ZONE1_AUTO = 2400;
->>>>>>> f03b3062e9be08d421339654b40e2742412eaabb
     public static int RPM_ZONE2 = 3200;
     public static int RPM_OFF = 0;
 
