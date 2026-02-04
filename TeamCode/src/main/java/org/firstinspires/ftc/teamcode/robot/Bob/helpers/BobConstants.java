@@ -15,7 +15,7 @@ public class BobConstants {
     public static double TICKS_PER_REV_SHOOTER = 28;
     public static int RPM_ZONE1 = 2400;
     public static int RPM_ZONE1_AUTO = 2450;
-    public static int RPM_ZONE2 = 3200;
+    public static int RPM_ZONE2 = 3050;
     public static int RPM_OFF = 0;
 
 
@@ -23,7 +23,7 @@ public class BobConstants {
     public static double P = 0.2;
     public static double I = 0.1;
     public static double D = 0.000001;
-    public static double F = 0.006;
+    public static double F = 0.008;
     public static double TARGET_RPM = 0;
 
     // ==================== PIDF TURRET ====================
@@ -34,6 +34,10 @@ public class BobConstants {
     public static double tD = 0;
     public static double tF = 0;
 
+    // limelight rotation pid
+    public static double ROTATION_KP = 3;
+    public static double ROTATION_KI = 0;
+    public static double ROTATION_KD = 1;
 
     // ==================== SPINDEXER ====================
     public static double TICKS_PER_REV_SPINDEXER = 8192;

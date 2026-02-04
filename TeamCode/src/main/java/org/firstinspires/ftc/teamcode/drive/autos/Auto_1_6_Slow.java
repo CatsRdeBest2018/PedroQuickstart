@@ -37,8 +37,8 @@ import org.firstinspires.ftc.teamcode.robot.RobotContext;
 
 import java.util.List;
 
-@Autonomous(name = "1.6 - Red States")
-public class Auto_1_6 extends OpMode {
+@Autonomous(name = "1.6 SLOW - Red States")
+public class Auto_1_6_Slow extends OpMode {
     private final Bob bob = new Bob();
 
     private double ramDistance = 20.0;
@@ -244,7 +244,7 @@ public class Auto_1_6 extends OpMode {
         switch (intakeState) {
             case 0:
                 if (isSpike1) follower.followPath(Path3, .35, true);
-                else follower.followPath(SpikeMark21, .45, true);
+                else follower.followPath(SpikeMark21, .35, true);
                 actionTimer.resetTimer();
                 setI(1);
                 break;
@@ -297,6 +297,7 @@ public class Auto_1_6 extends OpMode {
             case 7:
                 if (!follower.isBusy()) {
                     if (bob.isBall() || actionTimer.getElapsedTimeSeconds() > .7) {
+                        bob.intakeController.stopIntake();
                         if (isSpike1) {
                             pathState = 7;
                         } else {
@@ -330,7 +331,6 @@ public class Auto_1_6 extends OpMode {
             case 11:
                 waitThenRun(3.3);
                 break;
-
             case 3:
                 shootingAllThree1 = false;
                 ram=0;

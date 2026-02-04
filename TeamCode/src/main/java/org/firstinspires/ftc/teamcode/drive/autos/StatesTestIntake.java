@@ -228,8 +228,8 @@ public class StatesTestIntake extends OpMode {
         switch (intakeState) {
             case 0:
                 // Start creeping once
-                if (isSpike1) follower.followPath(SpikeCreep1, 0.3, true);
-                else follower.followPath(SpikeCreep2, 0.3, true);
+                if (isSpike1) follower.followPath(SpikeCreep1, 0.4, true);
+                else follower.followPath(SpikeCreep2, 0.4, true);
 
                 actionTimer.resetTimer();
                 secondSpike = true;
