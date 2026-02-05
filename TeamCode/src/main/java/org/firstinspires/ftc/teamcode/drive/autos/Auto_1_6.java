@@ -328,6 +328,7 @@ public class Auto_1_6 extends OpMode {
                 break;
             case 2:
             case 11:
+            case 19:
                 waitThenRun(3.3);
                 break;
 
@@ -355,6 +356,7 @@ public class Auto_1_6 extends OpMode {
 
             case 7:
                 if (!follower.isBusy()) {
+                    bob.intakeController.stopIntake();
                     switch (greenBallTarget) {
                         case 1:
                             bob.runMacro(SHOOTER_ZONE1_AUTO_3_BOMBA);
@@ -377,6 +379,7 @@ public class Auto_1_6 extends OpMode {
                 }
                 break;
             case 9:
+            case 17:
                 waitThenRun(.5);
 
                 break;
@@ -409,6 +412,7 @@ public class Auto_1_6 extends OpMode {
 
             case 15:
                 if (!follower.isBusy()) {
+                    bob.intakeController.stopIntake();
                     switch (greenBallTarget) {
                         case 1:
                             bob.runMacro(SHOOTER_ZONE1_AUTO_BOMBA);
@@ -430,10 +434,7 @@ public class Auto_1_6 extends OpMode {
                     setP(17);
                 }
                 break;
-            case 17:
-                waitThenRun(.5);
 
-                break;
             case 18:
                 shootingAllThree1 = true;
                 checkpoint3 = 18;
@@ -441,9 +442,6 @@ public class Auto_1_6 extends OpMode {
                 correctionTimer.resetTimer();
                 setP(19);
 
-                break;
-            case 19:
-                waitThenRun(3.3);
                 break;
             case 20:
                 shootingAllThree1 = false;
@@ -511,7 +509,7 @@ public class Auto_1_6 extends OpMode {
     public void loop() {
 
         bigTick();
-        if (pathState == -1 || opmodeTimer.getElapsedTimeSeconds() > 29) {
+        if (pathState == -1 || opmodeTimer.getElapsedTimeSeconds() > 29.5) {
             endAuto();
         }
 

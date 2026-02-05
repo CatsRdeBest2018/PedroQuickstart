@@ -59,7 +59,7 @@ public class BobConstants {
     public static double TRANSFER_PULSE_TIME = 300; // milliseconds
 
     // ==================== INTAKE ====================
-    public static double INTAKE_POWER_IN = -0.7;
+    public static double INTAKE_POWER_IN = -0.9;
     public static double INTAKE_POWER_OUT = 0.7;
     public static double INTAKE_POWER_OFF = 0;
     public static double BALL_PROX = 20;

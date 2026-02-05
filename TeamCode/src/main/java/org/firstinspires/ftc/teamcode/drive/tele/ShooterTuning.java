@@ -7,6 +7,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -41,6 +42,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+@Disabled
 @TeleOp(name = "Shooter Tuning")
 public class ShooterTuning extends OpMode {
 

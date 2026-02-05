@@ -22,6 +22,9 @@ import org.firstinspires.ftc.teamcode.robot.RobotContext;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.INTAKE_POWER_IN;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.BALL_PROX;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LSERVO;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.ROTATION_KD;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.ROTATION_KI;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.ROTATION_KP;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.RPM_ZONE1;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.RPM_ZONE2;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.SPINDEX_KD;
@@ -46,7 +49,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@TeleOp(name = "States TeleOp (Blue)")
+@TeleOp(name = "States TeleOp 1.6 (Blue)")
 public class Tele_1_6_Blue extends OpMode {
 
     TelemetryManager telemetryM;
@@ -55,7 +58,7 @@ public class Tele_1_6_Blue extends OpMode {
     private Timer macroTimer, actionTimer, opmodeTimer;
     Gamepad lastGamepad1 = new Gamepad(), lastGamepad2 = new Gamepad();
     Deque<Gamepad> gamepad1History = new LinkedList<>(), gamepad2History = new LinkedList<>();
-    private PID rotationPID = new PID(1.5,0,.08);
+    private PID rotationPID = new PID(ROTATION_KP,ROTATION_KI,ROTATION_KD);
     private boolean rotationCorrectionOn = false;
     private double rotationPower = 0;
     private double currentAngle = 0;
@@ -122,6 +125,8 @@ public class Tele_1_6_Blue extends OpMode {
         if (gamepad2.start || gamepad1.start) return;
 
         follower.update();
+        rotationPID.setConsts(ROTATION_KP, ROTATION_KI, ROTATION_KD);
+
         Pose currentPose = follower.getPose();
 //        telemetryM.debug("c1: "+ bob.c.getDistance(DistanceUnit.MM));
 //        telemetryM.debug("c2: "+ bob.c2.getDistance(DistanceUnit.MM));
@@ -146,7 +151,7 @@ public class Tele_1_6_Blue extends OpMode {
         if (rotationCorrectionOn) {
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
-                currentAngle = Math.toRadians(result.getTx());
+                currentAngle = Math.toRadians(-result.getTx());
                 rotationPower = rotationPID.tick(currentAngle);
             } else {
                 rotationPower = 0;

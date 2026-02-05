@@ -37,8 +37,8 @@ import org.firstinspires.ftc.teamcode.robot.RobotContext;
 
 import java.util.List;
 
-@Autonomous(name = "1.6 Slow - Red States")
-public class Auto_1_6_Slow extends OpMode {
+@Autonomous(name = "1.6 Slow - Blue States")
+public class Auto_1_6_Slow_Blue extends OpMode {
     private final Bob bob = new Bob();
 
     private double ramDistance = 20.0;
@@ -54,7 +54,12 @@ public class Auto_1_6_Slow extends OpMode {
     private int intakeState = 0;
     private int ram = 0;
     private boolean waiting2 = false;
-    private final Pose startPose = new Pose(86.89230769230768, 9.353846153846153, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose startPose = mirrorRedToBlue(new Pose(
+            86.89230769230768, 9.353846153846153, Math.toRadians(90)
+    )); // Start Pose of our robot.
+
+    private static final double FIELD_SIZE = 144.0; // full field size in inches (0–144)
+
     private boolean finished = false;
 
     public static double offset = 0;
@@ -71,6 +76,22 @@ public class Auto_1_6_Slow extends OpMode {
     public PathChain SpikeMark24;
     public PathChain park;
     public PathChain ramPath;
+
+    private static Pose mirrorRedToBlue(Pose red) {
+        double x = red.getX();
+        double y = red.getY();
+        double h = red.getHeading();
+
+        double newX = x;
+        double newY = FIELD_SIZE - y;
+        double newH = -h;
+
+        // normalize to [-π, π)
+        if (newH > Math.PI) newH -= 2 * Math.PI;
+        if (newH <= -Math.PI) newH += 2 * Math.PI;
+
+        return new Pose(newX, newY, newH);
+    }
 
     private void endAuto() {
         //bob.shooterController.setRPM(0);
@@ -90,93 +111,124 @@ public class Auto_1_6_Slow extends OpMode {
                 .pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(86.646, 9.354),
-                                new Pose(85, 85))
-
+                                mirrorRedToBlue(new Pose(86.646, 9.354)),
+                                mirrorRedToBlue(new Pose(85, 85))
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(90),
+                        -Math.toRadians(45)
+                )
                 .build();
 
         Path2 = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(85, 85), //(72, 72)
-                                new Pose(83.938, 82.708),
-                                new Pose(95, 83.692)
+                                mirrorRedToBlue(new Pose(85, 85)), //(72, 72)
+                                mirrorRedToBlue(new Pose(83.938, 82.708)),
+                                mirrorRedToBlue(new Pose(95, 83.692))
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(45),
+                        -Math.toRadians(0)
+                )
                 .build();
 
         Path3 = follower
                 .pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(95, 83.692),
-                                new Pose(107, 83.692)
+                                mirrorRedToBlue(new Pose(95, 83.692)),
+                                mirrorRedToBlue(new Pose(107, 83.692))
                         )
                 )
-
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(0)
+                )
                 .build();
 
         Path3_5 = follower
                 .pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(107, 83.692),
-                                new Pose(112, 83.692)
+                                mirrorRedToBlue(new Pose(107, 83.692)),
+                                mirrorRedToBlue(new Pose(112, 83.692))
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(0)
+                )
                 .build();
+
         Path3_5_5 = follower
                 .pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(112, 83.692),
-                                new Pose(125, 83.692)
+                                mirrorRedToBlue(new Pose(112, 83.692)),
+                                mirrorRedToBlue(new Pose(125, 83.692))
                         )
                 )
-
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(0)
+                )
                 .build();
 
         Path4 = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(125, 83.692),
-                                new Pose(89.600, 83.446),
-                                new Pose(85, 85)
+                                mirrorRedToBlue(new Pose(125, 83.692)),
+                                mirrorRedToBlue(new Pose(89.600, 83.446)),
+                                mirrorRedToBlue(new Pose(85, 85))
                         )
                 )
                 .setBrakingStrength(5)
-
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(45)
+                )
                 .build();
+
         SpikeMark2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(85, 85), new Pose(95, 60.000))
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(85, 85)),
+                                mirrorRedToBlue(new Pose(95, 60.000))
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(45),
+                        -Math.toRadians(0)
+                )
                 .build();
 
         SpikeMark21 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(95, 60.000), new Pose(107.000, 60.000))
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(95, 60.000)),
+                                mirrorRedToBlue(new Pose(107.000, 60.000))
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(0)
+                )
                 .build();
 
         SpikeMark22 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(107.000, 60.000), new Pose(112.000, 60.000))
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(107.000, 60.000)),
+                                mirrorRedToBlue(new Pose(112.000, 60.000))
+                        )
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -184,24 +236,42 @@ public class Auto_1_6_Slow extends OpMode {
         SpikeMark23 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(112.000, 60.000), new Pose(130, 55))
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(112.000, 60.000)),
+                                mirrorRedToBlue(new Pose(130, 55))
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(0))
                 .build();
 
         SpikeMark24 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(130, 55), new Pose(85, 85))
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(130, 55)),
+                                mirrorRedToBlue(new Pose(85, 85))
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(0),
+                        -Math.toRadians(45)
+                )
                 .build();
+
         park = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(85, 85), new Pose(102.8923076923077, 66.21538461538462))
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(85, 85)),
+                                mirrorRedToBlue(new Pose(102.8923076923077, 66.21538461538462))
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(-15))
+                .setLinearHeadingInterpolation(
+                        -Math.toRadians(45),
+                        -Math.toRadians(-15)
+                )
                 .build();
     }
 
@@ -270,8 +340,8 @@ public class Auto_1_6_Slow extends OpMode {
                 waitSpike(.5);
                 break;
             case 3:
-                if (isSpike1) follower.followPath(Path3_5, .35, true);
-                else follower.followPath(SpikeMark22, .35, true);
+                if (isSpike1) follower.followPath(Path3_5, .5, true);
+                else follower.followPath(SpikeMark22, .5, true);
                 setI(4);
                 actionTimer.resetTimer();
                 break;
@@ -289,8 +359,8 @@ public class Auto_1_6_Slow extends OpMode {
                 }
                 break;
             case 6:
-                if (isSpike1) follower.followPath(Path3_5_5, .35, true);
-                else follower.followPath(SpikeMark23, .35, true);
+                if (isSpike1) follower.followPath(Path3_5_5, .5, true);
+                else follower.followPath(SpikeMark23, .5, true);
                 setI(7);
                 actionTimer.resetTimer();
                 break;
@@ -507,7 +577,7 @@ public class Auto_1_6_Slow extends OpMode {
     public void loop() {
 
         bigTick();
-        if (pathState == -1 || opmodeTimer.getElapsedTimeSeconds() > 29) {
+        if (pathState == -1 || opmodeTimer.getElapsedTimeSeconds() > 29.5) {
             endAuto();
         }
 

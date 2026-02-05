@@ -49,7 +49,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@TeleOp(name = "States TeleOp (Red)")
+@TeleOp(name = "States TeleOp 1.6 (Red)")
 public class Tele_1_6 extends OpMode {
 
     TelemetryManager telemetryM;
@@ -214,7 +214,7 @@ public class Tele_1_6 extends OpMode {
     }
     private void autoControl(){
 
-        bob.updateLight(numBalls);
+        bob.updateLight(numBalls-1);
         bob.lservo.setPosition(LSERVO);
         //TODO: GAMEPAD1 CONTROLS (DRIVER)
 
