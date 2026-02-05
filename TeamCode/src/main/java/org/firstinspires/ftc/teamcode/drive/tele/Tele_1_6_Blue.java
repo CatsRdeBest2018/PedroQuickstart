@@ -73,7 +73,6 @@ public class Tele_1_6_Blue extends OpMode {
     private boolean isZoneOne = true;
     private boolean isMacroing = false;
     private int numBalls = 0;
-
     // Pedro
     private Pose startPose;
     private Follower follower;
@@ -198,9 +197,16 @@ public class Tele_1_6_Blue extends OpMode {
 
         // TODO: GAMEPAD2 CONTROLS (GUNNER)
         //zone 1
-        if (gamepad2.a && !lastGamepad2.a) bob.runMacro(SHOOTER_ZONE1);
+        if (gamepad2.a && !lastGamepad2.a) {
+            rotationPID.setTarget(0);
+            bob.runMacro(SHOOTER_ZONE1);
+        }
         //zone 2
-        if (gamepad2.y && !lastGamepad2.y) bob.runMacro(SHOOTER_ZONE2);
+        if (gamepad2.y && !lastGamepad2.y) {
+            rotationPID.setTarget(3);
+            bob.runMacro(SHOOTER_ZONE2);
+        }
+
 
         //stop shooter
         if (gamepad2.b && !lastGamepad2.b) bob.runMacro(SHOOTER_OFF);
