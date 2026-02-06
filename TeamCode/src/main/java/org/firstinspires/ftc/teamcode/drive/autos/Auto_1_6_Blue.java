@@ -116,7 +116,7 @@ public class Auto_1_6_Blue extends OpMode {
                 )
                 .setLinearHeadingInterpolation(
                         -Math.toRadians(90),
-                        -Math.toRadians(45)
+                        -Math.toRadians(47)
                 )
                 .build();
 
@@ -130,7 +130,7 @@ public class Auto_1_6_Blue extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(
-                        -Math.toRadians(45),
+                        -Math.toRadians(47),
                         -Math.toRadians(0)
                 )
                 .build();
@@ -358,8 +358,8 @@ public class Auto_1_6_Blue extends OpMode {
                 }
                 break;
             case 6:
-                if (isSpike1) follower.followPath(Path3_5_5, .5, true);
-                else follower.followPath(SpikeMark23, .5, true);
+                if (isSpike1) follower.followPath(Path3_5_5, 0.7, true);
+                else follower.followPath(SpikeMark23, 0.9, true);
                 setI(7);
                 actionTimer.resetTimer();
                 break;

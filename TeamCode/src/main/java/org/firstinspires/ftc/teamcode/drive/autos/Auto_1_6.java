@@ -94,7 +94,7 @@ public class Auto_1_6 extends OpMode {
                                 new Pose(85, 85))
 
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(47))
                 .build();
 
         Path2 = follower
@@ -106,7 +106,7 @@ public class Auto_1_6 extends OpMode {
                                 new Pose(95, 83.692)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(47), Math.toRadians(0))
                 .build();
 
         Path3 = follower
@@ -289,8 +289,8 @@ public class Auto_1_6 extends OpMode {
                 }
                 break;
             case 6:
-                if (isSpike1) follower.followPath(Path3_5_5, .5, true);
-                else follower.followPath(SpikeMark23, .5, true);
+                if (isSpike1) follower.followPath(Path3_5_5, .7, true);
+                else follower.followPath(SpikeMark23, .9, true);
                 setI(7);
                 actionTimer.resetTimer();
                 break;
