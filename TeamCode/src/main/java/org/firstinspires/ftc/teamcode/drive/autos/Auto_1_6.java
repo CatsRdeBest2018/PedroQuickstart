@@ -474,13 +474,13 @@ public class Auto_1_6 extends OpMode {
         follower.update();
         autoMain();
         bob.tick();
-        if (shootingAllThree1 && correctionTimer.getElapsedTimeSeconds() > 1) {
+        if (shootingAllThree1 && correctionTimer.getElapsedTimeSeconds() > 1.5) {
             Pose current = follower.getPose();
             Pose expected = new Pose(85, 85, Math.toRadians(45));
             double x = current.getX() - expected.getX();
             double y = current.getY() - expected.getY();
             double heading = Math.abs(current.getHeading() - expected.getHeading());
-            boolean pushed = (Math.hypot(x, y) > 2.0) || heading > Math.toRadians(10.0);
+            boolean pushed = (Math.hypot(x, y) > 3.0) || heading > Math.toRadians(10.0);
             if (pushed) {
                 bob.cancelMacros();
                 waiting = false;
