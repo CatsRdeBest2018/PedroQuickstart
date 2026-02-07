@@ -262,7 +262,7 @@ public class Tele_1_6 extends OpMode {
         // TODO: GAMEPAD2 CONTROLS (GUNNER)
         //zone 1
         if (gamepad2.a && !lastGamepad2.a) {
-            rotationPID.setTarget(0);
+            rotationPID.setTarget(Math.toRadians(0));
             isZoneOne = true;
             if (bob.newShooterController.getTargetRPM() == RPM_ZONE2){
                 bob.newShooterController.setRPM(RPM_ZONE1);
@@ -271,7 +271,7 @@ public class Tele_1_6 extends OpMode {
 
         //zone 2
         if (gamepad2.y && !lastGamepad2.y) {
-            rotationPID.setTarget(-3);
+            rotationPID.setTarget(Math.toRadians(3));
             isZoneOne = false;
             if (bob.newShooterController.getTargetRPM() == RPM_ZONE1){
                 bob.newShooterController.setRPM(RPM_ZONE2);

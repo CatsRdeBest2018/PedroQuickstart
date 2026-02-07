@@ -203,7 +203,7 @@ public class Tele_1_6_Blue extends OpMode {
         }
         //zone 2
         if (gamepad2.y && !lastGamepad2.y) {
-            rotationPID.setTarget(3);
+            rotationPID.setTarget(Math.toRadians(-3));
             bob.runMacro(SHOOTER_ZONE2);
         }
 
