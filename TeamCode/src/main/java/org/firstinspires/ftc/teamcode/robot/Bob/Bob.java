@@ -5,6 +5,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.*;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,6 +36,7 @@ public class Bob implements Robot {
     public DcMotorEx turret;
 
     public Servo hood;
+    Limelight3A limelight;
 
     public boolean manualReset = false;
     public double manualPower = 0;
@@ -75,6 +77,12 @@ public class Bob implements Robot {
         // INTAKE
         intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
         intake.setZeroPowerBehavior(BRAKE);
+
+        // LIMELIGHT
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100);
+        limelight.pipelineSwitch(0);
+        limelight.start();
 
         shooterController.start();
         turretController.start();
