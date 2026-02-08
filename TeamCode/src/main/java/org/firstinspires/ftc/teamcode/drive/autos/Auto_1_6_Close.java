@@ -37,8 +37,8 @@ import org.firstinspires.ftc.teamcode.robot.RobotContext;
 
 import java.util.List;
 
-@Autonomous(name = "FAR - Red States")
-public class Auto_1_6 extends OpMode {
+@Autonomous(name = "CLOSE - Red States")
+public class Auto_1_6_Close extends OpMode {
     private final Bob bob = new Bob();
 
     private double ramDistance = 20.0;
@@ -54,7 +54,7 @@ public class Auto_1_6 extends OpMode {
     private int intakeState = 0;
     private int ram = 0;
     private boolean waiting2 = false;
-    private final Pose startPose = new Pose(86.89230769230768, 9.353846153846153, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(117.32413793103447, 128.9103448275862, Math.toRadians(45)); // Start Pose of our robot.
     private boolean finished = false;
 
     public static double offset = 0;
@@ -86,15 +86,13 @@ public class Auto_1_6 extends OpMode {
     }
 
     public void buildPaths() {
-        Path1 = follower
-                .pathBuilder()
-                .addPath(
+        Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(86.646, 9.354),
-                                new Pose(85, 85))
+                                new Pose(117.324, 128.910),
 
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(47))
+                                new Pose(85, 85)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
                 .build();
 
         Path2 = follower
@@ -106,7 +104,7 @@ public class Auto_1_6 extends OpMode {
                                 new Pose(95, 83.692)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(47), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
         Path3 = follower
@@ -513,10 +511,7 @@ public class Auto_1_6 extends OpMode {
             endAuto();
         }
 
-        Pose currentPose = follower.getPose();
-
         telemetry.addData("there is ball: ", bob.isBall());
-        telemetry.addData("Pedro Pose:  "+String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())),"");
         telemetry.update();
 
     }

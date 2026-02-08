@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.robot.RobotContext;
 
 import java.util.List;
 
-@Autonomous(name = "1.6 - Blue States")
+@Autonomous(name = "FAR - Blue States")
 public class Auto_1_6_Blue extends OpMode {
     private final Bob bob = new Bob();
 

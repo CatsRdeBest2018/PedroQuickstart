@@ -26,6 +26,8 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,10 +166,12 @@ class LocalizationTest extends OpMode {
         telemetryM.debug("y:" + follower.getPose().getY());
         telemetryM.debug("heading:" + follower.getPose().getHeading());
         telemetryM.debug("total heading:" + follower.getTotalHeading());
+        telemetryM.debug("ppYaw" + pinpoint.getHeading(AngleUnit.DEGREES));
+        telemetryM.debug("pinpointConnection: " + pinpoint.getConnectionInfo());
         telemetryM.debug("ticksx: " + pinpoint.getEncoderX());
         telemetryM.debug("ticksy: "+pinpoint.getEncoderY());
           telemetryM.update(telemetry);
-
+        pinpoint.update();
         drawCurrentAndHistory();
     }
 }
