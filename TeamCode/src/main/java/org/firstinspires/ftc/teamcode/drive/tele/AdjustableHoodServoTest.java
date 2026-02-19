@@ -1,30 +1,36 @@
 package org.firstinspires.ftc.teamcode.drive.tele;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@Configurable
 @TeleOp(name = "Servo Step Control", group = "Test")
 public class AdjustableHoodServoTest extends LinearOpMode {
 
-    Servo myServo;
+    Servo hood;
 
-    double position = 0.5;
+    public static double position = 0.5;
+    TelemetryManager t;
 
 
-    boolean lastA = false;
-    boolean lastB = false;
+    public boolean lastA = false;
+    public boolean lastB = false;
 
     @Override
     public void runOpMode() {
 
-        myServo = hardwareMap.get(Servo.class, "servo");
-        myServo.setPosition(position);
+        hood = hardwareMap.get(Servo.class, "hood");
+        hood.setPosition(position);
+        t = PanelsTelemetry.INSTANCE.getTelemetry();
+
 
         waitForStart();
 
         while (opModeIsActive()) {
-
+            t.update();
             boolean currentA = gamepad1.a;
             boolean currentB = gamepad1.b;
 
@@ -41,11 +47,10 @@ public class AdjustableHoodServoTest extends LinearOpMode {
 
             position = Math.max(0.0, Math.min(1.0, position));
 
-            myServo.setPosition(position);
+            hood.setPosition(position);
 
             telemetry.addData("Servo Position", position);
             telemetry.update();
-
             lastA = currentA;
             lastB = currentB;
         }
