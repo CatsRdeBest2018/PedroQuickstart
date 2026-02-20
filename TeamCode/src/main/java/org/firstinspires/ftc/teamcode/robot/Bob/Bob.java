@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.*;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,7 +36,12 @@ public class Bob implements Robot {
     public DcMotorEx shooterLeft;
     public DcMotorEx turret;
 
+
     public Servo hood;
+    public Servo ballStop;
+    public CRServo intakeLeft;
+    public CRServo intakeRight;
+
     Limelight3A limelight;
 
     public boolean manualReset = false;
@@ -73,6 +79,8 @@ public class Bob implements Robot {
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turret.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
 
         // INTAKE
         intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
