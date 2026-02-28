@@ -5,15 +5,13 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @Configurable
-@TeleOp(name = "Servo Step Control", group = "Test")
-public class AdjustableHoodServoTest extends LinearOpMode {
+@TeleOp(name = "ThroughbotQuickTest", group = "Test")
+public class AdarshTester extends LinearOpMode {
 
     ServoImplEx hood;
     CRServoImplEx intakeRight;
