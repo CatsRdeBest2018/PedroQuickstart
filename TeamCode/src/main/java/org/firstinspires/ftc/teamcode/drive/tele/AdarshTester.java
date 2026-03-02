@@ -6,6 +6,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -17,9 +18,12 @@ public class AdarshTester extends LinearOpMode {
     CRServoImplEx intakeRight;
     CRServoImplEx intakeLeft;
     DcMotorImplEx intake;
+    DcMotorImplEx sl;
+    DcMotorImplEx sr;
 
-    public static double position = 0;
-    public static double power = 0;
+    public static double hoodPosition = 0;
+    public static double intakePower = 0;
+    public static double shooterPower = 0;
     TelemetryManager t;
 
 
@@ -30,13 +34,17 @@ public class AdarshTester extends LinearOpMode {
         intakeRight = hardwareMap.get(CRServoImplEx.class,"intakeRight");
         intakeLeft = hardwareMap.get(CRServoImplEx.class,"intakeLeft");
         intake = hardwareMap.get(DcMotorImplEx.class,"intake");
+        sr = hardwareMap.get(DcMotorImplEx.class, "sr");
+        sl = hardwareMap.get(DcMotorImplEx.class, "sl");
 
         intake.setDirection(DcMotorImplEx.Direction.REVERSE);
 
-        hood.setPosition(position);
-        intakeRight.setPower(power);
-        intakeLeft.setPower(-power);
-        intake.setPower(power);
+        hood.setPosition(hoodPosition);
+        intakeRight.setPower(intakePower);
+        intakeLeft.setPower(-intakePower);
+        intake.setPower(intakePower);
+        sl.setPower(-shooterPower);
+        sr.setPower(shooterPower);
         t = PanelsTelemetry.INSTANCE.getTelemetry();
 
 
@@ -45,11 +53,15 @@ public class AdarshTester extends LinearOpMode {
         while (opModeIsActive()) {
             t.update();
 
-            hood.setPosition(position);
-            intakeRight.setPower(power);
-            intakeLeft.setPower(-power);
-            intake.setPower(power);
-            telemetry.addData("Servo Position", position);
+            hood.setPosition(hoodPosition);
+            intakeRight.setPower(intakePower);
+            intakeLeft.setPower(-intakePower);
+            intake.setPower(intakePower);
+            sl.setPower(-shooterPower);
+            sr.setPower(shooterPower);
+            telemetry.addData("Servo Position", hoodPosition);
+            telemetry.addData("Intake Power", intakePower);
+            telemetry.addData("Shooter Power", shooterPower);
             telemetry.update();
 
         }
