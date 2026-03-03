@@ -20,10 +20,12 @@ public class AdarshTester extends LinearOpMode {
     DcMotorImplEx intake;
     DcMotorImplEx sl;
     DcMotorImplEx sr;
+    ServoImplEx ballStop;
 
     public static double hoodPosition = 0;
     public static double intakePower = 0;
     public static double shooterPower = 0;
+    public static double stopperPos = 0;
     TelemetryManager t;
 
 
@@ -36,6 +38,7 @@ public class AdarshTester extends LinearOpMode {
         intake = hardwareMap.get(DcMotorImplEx.class,"intake");
         sr = hardwareMap.get(DcMotorImplEx.class, "sr");
         sl = hardwareMap.get(DcMotorImplEx.class, "sl");
+        ballStop = hardwareMap.get(ServoImplEx.class, "ballStop");
 
         intake.setDirection(DcMotorImplEx.Direction.REVERSE);
 
@@ -45,6 +48,7 @@ public class AdarshTester extends LinearOpMode {
         intake.setPower(intakePower);
         sl.setPower(-shooterPower);
         sr.setPower(shooterPower);
+        ballStop.setPosition(stopperPos);
         t = PanelsTelemetry.INSTANCE.getTelemetry();
 
 
@@ -59,9 +63,11 @@ public class AdarshTester extends LinearOpMode {
             intake.setPower(intakePower);
             sl.setPower(-shooterPower);
             sr.setPower(shooterPower);
+            ballStop.setPosition(stopperPos);
             telemetry.addData("Servo Position", hoodPosition);
             telemetry.addData("Intake Power", intakePower);
             telemetry.addData("Shooter Power", shooterPower);
+            telemetry.addData("ballStop position", stopperPos);
             telemetry.update();
 
         }
