@@ -32,7 +32,7 @@ public class PIDFShooter {
 
     private int usePID = 500;
 
-    // --- Constructors ---
+    //constructors
 
     public PIDFShooter(double ticksPerRev) {
         this(ticksPerRev, 0, 0, 0, 0);
@@ -44,7 +44,7 @@ public class PIDFShooter {
         reset(0);
     }
 
-    // --- Config ---
+    //Config
 
     public void setConsts(double kP, double kI, double kD, double kF) {
         this.kP = kP;
@@ -65,7 +65,7 @@ public class PIDFShooter {
         timer.reset();
     }
 
-    // --- Target Setting ---
+    //Target Setting
 
     /** Set the target RPM. */
     public void setTargetRPM(double rpm) {
