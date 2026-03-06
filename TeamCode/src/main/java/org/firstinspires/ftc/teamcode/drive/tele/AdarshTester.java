@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants;
+
 @Configurable
 @TeleOp(name = "ThroughbotQuickTest", group = "Test")
 public class AdarshTester extends LinearOpMode {
@@ -46,8 +48,8 @@ public class AdarshTester extends LinearOpMode {
         intakeRight.setPower(intakePower);
         intakeLeft.setPower(-intakePower);
         intake.setPower(intakePower);
-        sl.setPower(-shooterPower);
-        sr.setPower(shooterPower);
+        sl.setPower(-BobConstants.RPM_ZONE1_AUTO);
+        sr.setPower(BobConstants.RPM_ZONE1_AUTO);
         ballStop.setPosition(stopperPos);
         t = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -61,8 +63,8 @@ public class AdarshTester extends LinearOpMode {
             intakeRight.setPower(intakePower);
             intakeLeft.setPower(-intakePower);
             intake.setPower(intakePower);
-            sl.setPower(-shooterPower);
-            sr.setPower(shooterPower);
+            sl.setPower(-BobConstants.RPM_ZONE1_AUTO);
+            sr.setPower(BobConstants.RPM_ZONE1_AUTO);
             ballStop.setPosition(stopperPos);
             telemetry.addData("Servo Position", hoodPosition);
             telemetry.addData("Intake Power", intakePower);
