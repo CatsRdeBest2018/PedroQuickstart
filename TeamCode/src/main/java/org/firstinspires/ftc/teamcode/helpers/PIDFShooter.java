@@ -61,7 +61,7 @@ public class PIDFShooter {
         lastTicks = currentTicks;
         firstSample = true;
 
-        targetRPM = 0;
+        //targetRPM = 0;
         timer.reset();
     }
 
@@ -83,17 +83,12 @@ public class PIDFShooter {
 
     // --- RPM Calculation ---
 
-    private double computeCurrentRPM(double currentTicks) {
-        double dt = timer.seconds();
-        if (dt <= 0) dt = 1e-3;
-
-        timer.reset();
-
+    private double computeCurrentRPM(double currentTicks, double dt) {
         if (firstSample) {
             firstSample = false;
             lastTicks = currentTicks;
             currentRPM = 0;
-            return currentRPM;
+            return 0;
         }
 
         double deltaTicks = currentTicks - lastTicks;
@@ -105,55 +100,39 @@ public class PIDFShooter {
         return currentRPM;
     }
 
-
-    // --- Main PID update ---
-
-    /**
-     * Call every loop with current encoder ticks.
-     * Returns a power in [-1, 1] to send to the shooter motor.
-     */
     public double update(double currentTicks) {
-
-        // Compute RPM from ticks
-        double currentRPM = computeCurrentRPM(currentTicks);
-
-        double error = targetRPM - currentRPM;
-
-        // integrate
         double dt = Math.max(timer.seconds(), 1e-3);
-        integralSum += error * dt;
-        integralSum = Range.clip(integralSum, -maxIntegral, maxIntegral);
+        timer.reset();
+
+        // Don't accumulate anything on the first sample — RPM isn't known yet
+        if (firstSample) {
+            computeCurrentRPM(currentTicks, dt);
+            return Range.clip(kF * targetRPM, -1, 1);
+        }
+
+        double currentRPM = computeCurrentRPM(currentTicks, dt);
+        double error = targetRPM - currentRPM;
 
         if (targetRPM == 0) {
             integralSum = 0;
+            lastError = 0;
+            return 0;
         }
 
-        // derivative
+        // Only integrate when output isn't saturated (prevent windup)
+        double rawOutput = kF * targetRPM + kP * error;
+        boolean saturated = Math.abs(rawOutput) >= 1.0;
+        boolean windingUp = (error > 0 && integralSum > 0) || (error < 0 && integralSum < 0);
+
+        if (!saturated || !windingUp) {
+            integralSum += error * dt;
+            integralSum = Range.clip(integralSum, -maxIntegral, maxIntegral);
+        }
+
         double derivative = (error - lastError) / dt;
         lastError = error;
 
-        // PID output
         double output = kF * targetRPM + kP * error + kI * integralSum + kD * derivative;
-
-           if (getTargetRPM() <= 100) {
-               run = 1;
-           }
-
-        if (run == 1){
-            if (getTargetRPM() > 2500) run = 2;
-        }
-        if (run == 2) {
-            if ((getTargetRPM() - getCurrentRPM()) <= 200) {
-                run = 0;
-                return Range.clip(output, -1, 1);
-            }
-
-            else {
-                return 1.0;
-            }
-        }
-
         return Range.clip(output, -1, 1);
-
     }
 }

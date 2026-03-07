@@ -128,18 +128,24 @@ public class CONFIGURE extends OpMode {
                 bob.turretController.update(result.getTx());
             } else {
                 telemetryM.addData("Limelight", "No Targets");
+                bob.turretController.update(0);
             }
         }
     }
 
     private void Shooter(){
         if (SHOOTER_ON){
+
+            if (!USE_DISTANCE) bob.shooterController.setRPM(BobConfigure.Shooter.TARGET_RPM);
+            else bob.shooterController.setRPMWithDistance(DISTANCE_TO_TARGET);
             bob.shooterController.configureConsts();
+            bob.shooterController.update();
             telemetryM.debug("Current RPM: "+bob.shooterController.getCurrentRPM());
             telemetryM.debug("Target RPM "+BobConfigure.Shooter.TARGET_RPM);
-            if (!USE_DISTANCE) bob.shooterController.setRPM(TARGET_RPM);
-            else bob.shooterController.setRPMWithDistance(DISTANCE_TO_TARGET);
-            bob.shooterController.update();
+            telemetryM.debug("Current power: "+bob.shooterController.getPower());
+            telemetryM.debug("Current ticks: "+bob.shooterController.getTicks());
+            telemetryM.debug("left position: "+bob.shooterController.getLeftPos());
+            telemetryM.debug("right position: "+bob.shooterController.getRightPos());
         }
 
     }

@@ -7,8 +7,10 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.*;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -35,12 +37,13 @@ public class Bob implements Robot {
     public DcMotorEx shooterRight;
     public DcMotorEx shooterLeft;
     public DcMotorEx turret;
+    public CRServoImplEx intakeRight;
+    public CRServoImplEx intakeLeft;
 
 
     public Servo hood;
     public Servo ballStop;
-    public CRServo intakeLeft;
-    public CRServo intakeRight;
+
 
     Limelight3A limelight;
 
@@ -85,6 +88,10 @@ public class Bob implements Robot {
         // INTAKE
         intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
         intake.setZeroPowerBehavior(BRAKE);
+        intakeLeft = hardwareMap.get(CRServoImplEx.class, "intakeLeft");
+
+        intakeRight = hardwareMap.get(CRServoImplEx.class, "intakeRight");
+        intakeRight.setDirection(CRServoImplEx.Direction.REVERSE);
 
         // LIMELIGHT
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -110,6 +117,10 @@ public class Bob implements Robot {
 
 
     public class ShooterController {
+        double powerT;
+        double ticksT;
+        double leftPos;
+        double rightPos;
         private PIDFShooter shootPID;
         public void start() {
             shootPID = new PIDFShooter(TICKS_PER_REV_SHOOTER, P, I, D,F);
@@ -122,13 +133,28 @@ public class Bob implements Robot {
 
         public void update(){
             double currentTicks = (shooterLeft.getCurrentPosition() + shooterRight.getCurrentPosition()) / 2.0;
-            if (shootPID.getTargetRPM() == RPM_OFF)shootPID.setConsts(0, 0, 0,F);
-            else shootPID.setConsts(P, I, D,F);
+          //  if (shootPID.getTargetRPM() == RPM_OFF)shootPID.setConsts(0, 0, 0,F);
+          //  else shootPID.setConsts(P, I, D,F);
 
             double power = shootPID.update(currentTicks);
-
+            ticksT = currentTicks;
+            powerT = power;
+            leftPos = shooterLeft.getCurrentPosition();
+            rightPos = shooterRight.getCurrentPosition();
             shooterLeft.setPower(power);
             shooterRight.setPower(power);
+        }
+        public double getPower(){
+            return powerT;
+        }
+        public double getTicks(){
+            return ticksT;
+        }
+        public double getRightPos(){
+            return rightPos;
+        }
+        public double getLeftPos(){
+            return leftPos;
         }
         public void setRPM(double rpm) {
             shootPID.setTargetRPM(rpm);
@@ -187,7 +213,7 @@ public class Bob implements Robot {
 
         public void update(double currentAngle){
             double power = turretPIDF.update(currentAngle);
-            turret.setPower(power);
+            turret.setPower(-power);
         }
         public void setTargetAngle(double angle) {
             turretPIDF.setTargetAngle(angle);
@@ -212,9 +238,13 @@ public class Bob implements Robot {
         }
         public void intakeTick() {
             intake.setPower(intakePower);
+            intakeLeft.setPower(intakePower);
+            intakeRight.setPower(intakePower);
         }
         public void setIntake(double pow) {
             intake.setPower(pow);
+            intakeLeft.setPower(pow);
+            intakeRight.setPower(pow);
         }
     }
 
