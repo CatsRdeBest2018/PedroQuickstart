@@ -44,6 +44,7 @@ public class CONFIGURE extends OpMode {
     Limelight3A limelight;
     private Follower follower;
     private Pose startPose;
+    private double limeDist = 1;
     @Override
     public void init() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -66,9 +67,9 @@ public class CONFIGURE extends OpMode {
         follower.update();
 
         Position();
-        Shooter();
         Turret();
         Hood();
+        Shooter();
        // Stopper();
         Intake();
         telemetryM.update();
@@ -129,10 +130,10 @@ public class CONFIGURE extends OpMode {
             double turretAngle = bob.turretController.getTurretAngle();
             telemetryM.debug("Current Turret Angle: "+ turretAngle);
             telemetryM.debug("Current Turret Ticks: "+ bob.turretController.getTurretTicks());
-            telemetryM.debug("Angular Velocity: "+ follower.getAngularVelocity());
-
+            telemetryM.debug("limelight distance: "+ limeDist);
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
+                limeDist = result.getBotposeAvgDist();
                 if ((turretAngle > 90.0 && result.getTx() > 0)
                         ||
                         (turretAngle < -135.0 && result.getTx() < 0)
@@ -147,9 +148,8 @@ public class CONFIGURE extends OpMode {
 
     private void Shooter(){
         if (SHOOTER_ON){
-
             if (!USE_DISTANCE) bob.shooterController.setRPM(BobConfigure.Shooter.TARGET_RPM);
-            else bob.shooterController.setRPMWithDistance(DISTANCE_TO_TARGET);
+            else bob.shooterController.setRPMWithDistance(limeDist);
             bob.shooterController.configureConsts();
             bob.shooterController.update();
             telemetryM.debug("Current RPM: "+bob.shooterController.getCurrentRPM());
@@ -161,7 +161,7 @@ public class CONFIGURE extends OpMode {
     private void Hood(){
         if (HOOD_ON){
             if (!BobConfigure.Hood.USE_DISTANCE) bob.hoodController.setHoodPos(HOOD_POS);
-            else bob.hoodController.setHoodPos(DISTANCE_TO_TARGET);
+            else bob.hoodController.setHoodPosWithDistance(limeDist);
         }
     }
 //    private void Stopper(){

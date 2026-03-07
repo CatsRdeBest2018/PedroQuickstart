@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.helpers.PIDFShooter;
@@ -164,7 +165,7 @@ public class Bob implements Robot {
             shootPID.setTargetRPM(rpm);
         }
         public void setRPMWithDistance(double distance) {
-            double rpm = distance; // equation here!
+            double rpm = (0.00642857 * distance + 1.9) * 1000;
             shootPID.setTargetRPM(rpm);
         }
 
@@ -188,8 +189,8 @@ public class Bob implements Robot {
             hood.setPosition(pos);
         }
         public void setHoodPosWithDistance(double distance){
-            double pos = distance; // equation here!
-            hood.setPosition(pos);
+            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 10.0;
+            hood.setPosition(Range.clip(pos, 0.1, 0.7));
         }
     }
 //    public class StopperController {
