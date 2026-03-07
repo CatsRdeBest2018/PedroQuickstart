@@ -5,6 +5,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.*;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -32,6 +33,7 @@ public class Bob implements Robot {
     public ShooterController shooterController = new ShooterController();
     public TurretController turretController = new TurretController();
     public HoodController hoodController = new HoodController();
+   // public StopperController stopperController = new StopperController();
 
     public DcMotorEx intake;
     public DcMotorEx shooterRight;
@@ -39,11 +41,8 @@ public class Bob implements Robot {
     public DcMotorEx turret;
     public CRServoImplEx intakeRight;
     public CRServoImplEx intakeLeft;
-
-
     public Servo hood;
-    public Servo ballStop;
-
+    public Servo stopper;
 
     Limelight3A limelight;
 
@@ -64,6 +63,9 @@ public class Bob implements Robot {
 
         // HOOD
         hood = hardwareMap.servo.get("hood");
+
+        // STOPPER
+       // stopper = hardwareMap.servo.get("ballstop");
 
         // SHOOTERS
         shooterRight = (DcMotorEx) hardwareMap.dcMotor.get("sr");
@@ -87,11 +89,12 @@ public class Bob implements Robot {
 
         // INTAKE
         intake = (DcMotorEx) hardwareMap.dcMotor.get("intake");
+        intake.setDirection(DcMotorEx.Direction.REVERSE);
         intake.setZeroPowerBehavior(BRAKE);
         intakeLeft = hardwareMap.get(CRServoImplEx.class, "intakeLeft");
 
         intakeRight = hardwareMap.get(CRServoImplEx.class, "intakeRight");
-        intakeRight.setDirection(CRServoImplEx.Direction.REVERSE);
+        intakeLeft.setDirection(CRServoImplEx.Direction.REVERSE);
 
         // LIMELIGHT
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -102,6 +105,7 @@ public class Bob implements Robot {
         shooterController.start();
         turretController.start();
         hoodController.start();
+        //stopperController.start();
 
         hw = hardwareMap;
         runtime.reset();
@@ -123,7 +127,7 @@ public class Bob implements Robot {
         double rightPos;
         private PIDFShooter shootPID;
         public void start() {
-            shootPID = new PIDFShooter(TICKS_PER_REV_SHOOTER, P, I, D,F);
+            shootPID = new PIDFShooter(TICKS_PER_REV_SHOOTER,3000, P, I, D,F);
             shootPID.reset(0);
         }
 
@@ -188,6 +192,17 @@ public class Bob implements Robot {
             hood.setPosition(pos);
         }
     }
+//    public class StopperController {
+//        public void start() {
+//            stopper.setPosition(STOPPER_STARTING_POS);
+//        }
+//        public double getStopperPos(){
+//            return stopper.getPosition();
+//        }
+//        public void setStopperPos(double pos) {
+//            stopper.setPosition(pos);
+//        }
+//    }
 
     public class TurretController {
         private PIDFTurret turretPIDF;
@@ -211,8 +226,8 @@ public class Bob implements Robot {
         }
 
 
-        public void update(double currentAngle){
-            double power = turretPIDF.update(currentAngle);
+        public void update(double currentAngle, double angVel){
+            double power = turretPIDF.update(currentAngle, angVel);
             turret.setPower(-power);
         }
         public void setTargetAngle(double angle) {

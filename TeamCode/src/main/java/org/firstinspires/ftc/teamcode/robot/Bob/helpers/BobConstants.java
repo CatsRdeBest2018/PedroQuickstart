@@ -20,23 +20,26 @@ public class BobConstants {
 
 
     // ==================== PIDF SHOOTER ====================
-    public static double P = 0.2;
-    public static double I = 0.1;
-    public static double D = 0.000001;
-    public static double F = 0.006;
+    public static double P = 2;
+    public static double I = 0.4;
+    public static double D = 0;
+    public static double F = 1;
     public static double TARGET_RPM = 0;
 
     // ==================== PIDF TURRET ====================
-    public static double TICKS_PER_REV_TURRET = 8192;
+    public static double TICKS_PER_REV_TURRET = 1600;
     public static double KALMAN_TURRET = 0.1;
-    public static double tP = 0;
-    public static double tI = 0;
-    public static double tD = 0;
-    public static double tF = 0;
+    public static double tP = 0.017;
+    public static double tI = 0.05;
+    public static double tD = 0.0014;
+    public static double tF = 0.15;
     public static double DISTANCE_FROM_TARGET = 0;
 
     // ==================== HOOD CONTROL ====================
-    public static double HOOD_STARTING_POS = 0;
+    public static double HOOD_STARTING_POS = 0.2;
+
+    // ==================== STOPPER CONTROL ====================
+    public static double STOPPER_STARTING_POS = 0;
 
     // ==================== SPINDEXER ====================
     public static double TICKS_PER_REV_SPINDEXER = 8192;

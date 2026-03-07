@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.Bob.helpers;
 
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.HOOD_STARTING_POS;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.STOPPER_STARTING_POS;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tD;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tF;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tI;
@@ -40,6 +41,12 @@ public class BobConfigure {
         public static boolean HOOD_ON = false;
         public static boolean USE_DISTANCE = false;
         public static double HOOD_POS = HOOD_STARTING_POS;
+
+    }
+    @Configurable
+    public static class Stopper{
+        public static boolean STOPPER_ON = false;
+        public static double STOPPER_POS = STOPPER_STARTING_POS;
 
     }
     @Configurable

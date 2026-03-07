@@ -107,7 +107,7 @@ public class TurretTele extends OpMode {
         // LIMELIGHT
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
-            bob.turretController.update(result.getTx());
+            bob.turretController.update(result.getTx(),0);
             if (Math.abs(result.getTx()) < 0.5) {
                 updatePose3(result.getBotposeAvgDist());
             }

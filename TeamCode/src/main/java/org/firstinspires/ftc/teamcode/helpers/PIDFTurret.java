@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.helpers;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Robot.TICKS_PER_REV;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.TICKS_PER_REV_TURRET;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,20 +7,16 @@ import com.qualcomm.robotcore.util.Range;
 
 public class PIDFTurret {
 
-    // PIDF gains
     private double kP, kI, kD, kF;
 
-    // Target position (encoder ticks)
     private double targetAngle = 0;
-
     private double turretAngle = 0;
-    // PID state
+
     private double integralSum = 0;
     private double lastError = 0;
 
     private final ElapsedTime timer = new ElapsedTime();
-
-    private static final double maxIntegral = 3000;
+    private static final double MAX_INTEGRAL = 1.0; // in output units, not ticks
 
     public PIDFTurret(double kP, double kI, double kD, double kF) {
         setConsts(kP, kI, kD, kF);
@@ -41,11 +36,12 @@ public class PIDFTurret {
         timer.reset();
     }
 
-    public double getTurretAngle(double currentTicks){
+    public double getTurretAngle(double currentTicks) {
         double rev = (currentTicks / (double) TICKS_PER_REV_TURRET) % 1.0;
         turretAngle = rev * 360;
         return turretAngle;
     }
+
     public void setTargetAngle(double targetAngle) {
         this.targetAngle = targetAngle;
     }
@@ -54,21 +50,49 @@ public class PIDFTurret {
         return targetAngle;
     }
 
+    // Wraps angle error to [-180, 180] so turret always takes shortest path
+    private double wrapError(double error) {
+        while (error > 180) error -= 360;
+        while (error < -180) error += 360;
+        return error;
+    }
 
-    public double update(double currentAngle) {
+    /**
+     * @param currentAngle      current turret angle in degrees
+     * @param robotAngularVel   robot's angular velocity in degrees/sec from IMU
+     *                          pass 0.0 if not available
+     */
+    public double update(double currentAngle, double robotAngularVel) {
 
-        double error = targetAngle - currentAngle;
-        integralSum += error;
-        integralSum = Range.clip(integralSum, -maxIntegral, maxIntegral);
+        //double robotAngularVelDeg = Math.toDegrees(robotAngularVel);
+        double dt = timer.seconds();
+        timer.reset();
 
-        if (Math.abs(error) < 0.5) integralSum = 0;
+        // Clamp dt to avoid huge spikes on first loop or after a pause
+        if (dt <= 0 || dt > 0.5) dt = 0.02;
 
-        double derivative = error - lastError;
+        double error = wrapError(targetAngle - currentAngle);
+
+        // Integral with dt — consistent regardless of loop speed
+        if (Math.abs(error) > 0.5) {
+            integralSum += error * dt;
+            integralSum = Range.clip(integralSum, -MAX_INTEGRAL / kI, MAX_INTEGRAL / kI);
+        } else {
+            integralSum = 0;
+        }
+
+        // Derivative with dt — smooth, loop-speed independent
+        double derivative = (error - lastError) / dt;
         lastError = error;
 
-        double feedForward = kF * Math.signum(error);
+        // True feedforward: counteract robot rotation proactively
+        // robotAngularVel in deg/s — tune kF so this roughly matches needed motor output
+        double feedForward = kF * -robotAngularVel;
 
-        double output = kP * error + kI * integralSum + kD * derivative + feedForward;
+        double output = (kP * error)
+                + (kI * integralSum)
+                + (kD * derivative)
+                + feedForward;
 
         return Range.clip(output, -1.0, 1.0);
     }

@@ -9,6 +9,8 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Posi
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.SHOW_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.SHOOTER_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.USE_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_ON;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_POS;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.DISTANCE_FROM_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
@@ -67,6 +69,7 @@ public class CONFIGURE extends OpMode {
         Shooter();
         Turret();
         Hood();
+       // Stopper();
         Intake();
         telemetryM.update();
     }
@@ -123,12 +126,21 @@ public class CONFIGURE extends OpMode {
     private void Turret(){
         if (TURRET_ON){
             bob.turretController.configureTurretConsts();
+            double turretAngle = bob.turretController.getTurretAngle();
+            telemetryM.debug("Current Turret Angle: "+ turretAngle);
+            telemetryM.debug("Current Turret Ticks: "+ bob.turretController.getTurretTicks());
+            telemetryM.debug("Angular Velocity: "+ follower.getAngularVelocity());
+
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
-                bob.turretController.update(result.getTx());
+                if ((turretAngle > 90.0 && result.getTx() > 0)
+                        ||
+                        (turretAngle < -135.0 && result.getTx() < 0)
+                ) bob.turretController.update(0, 0);
+               else bob.turretController.update(result.getTx(), follower.getAngularVelocity());
             } else {
                 telemetryM.addData("Limelight", "No Targets");
-                bob.turretController.update(0);
+                bob.turretController.update(0,0);
             }
         }
     }
@@ -142,10 +154,6 @@ public class CONFIGURE extends OpMode {
             bob.shooterController.update();
             telemetryM.debug("Current RPM: "+bob.shooterController.getCurrentRPM());
             telemetryM.debug("Target RPM "+BobConfigure.Shooter.TARGET_RPM);
-            telemetryM.debug("Current power: "+bob.shooterController.getPower());
-            telemetryM.debug("Current ticks: "+bob.shooterController.getTicks());
-            telemetryM.debug("left position: "+bob.shooterController.getLeftPos());
-            telemetryM.debug("right position: "+bob.shooterController.getRightPos());
         }
 
     }
@@ -156,6 +164,10 @@ public class CONFIGURE extends OpMode {
             else bob.hoodController.setHoodPos(DISTANCE_TO_TARGET);
         }
     }
+//    private void Stopper(){
+//        if (STOPPER_ON)bob.stopperController.setStopperPos(STOPPER_POS);
+//
+//    }
 
     private void Intake(){
         if (INTAKE_ON){
