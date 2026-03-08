@@ -189,7 +189,7 @@ public class Bob implements Robot {
             hood.setPosition(pos);
         }
         public void setHoodPosWithDistance(double distance){
-            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 10.0;
+            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 100.0;
             hood.setPosition(Range.clip(pos, 0.1, 0.7));
         }
     }

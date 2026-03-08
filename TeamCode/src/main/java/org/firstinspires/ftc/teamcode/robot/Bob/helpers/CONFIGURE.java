@@ -42,15 +42,15 @@ public class CONFIGURE extends OpMode {
     TelemetryManager telemetryM;
     private double odoDistance = 0;
     Limelight3A limelight;
-    private Follower follower;
+  //  private Follower follower;
     private Pose startPose;
     private double limeDist = 1;
     @Override
     public void init() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         startPose = new Pose(LAST_X,LAST_Y,LAST_HEADING);
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startPose);
+    //    follower = Constants.createFollower(hardwareMap);
+    //    follower.setStartingPose(startPose);
         bob.init(hardwareMap);;
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
@@ -64,7 +64,7 @@ public class CONFIGURE extends OpMode {
     @Override
 
     public void loop() {
-        follower.update();
+     //   follower.update();
 
         Position();
         Turret();
@@ -74,54 +74,54 @@ public class CONFIGURE extends OpMode {
         Intake();
         telemetryM.update();
     }
-    private void updatePose3(double dist){
-         final double cameraDistFromCenter = 3.6875;
-         final double cameraHeight = 10.76; // inches
-         final double tagHeight = 29.5; // inches
-         final double heightDif = tagHeight-cameraHeight;
-        try {
-            Pose currentFollowerPose = follower.getPose();
-            double distanceFromTag = Math.sqrt(((dist*39.3701)*(dist*39.3701))- (heightDif*heightDif));
-            double trueAngle = Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
-            trueAngle = Math.toRadians(trueAngle);
-            telemetryM.debug("limelight distance to target: " + distanceFromTag);
-            if (Math.toDegrees(trueAngle) != 90) {
-                double visionY = Math.sin(trueAngle) * distanceFromTag;
-                double visionX = Math.cos(trueAngle) * distanceFromTag;
-                visionX += Math.cos(trueAngle)*cameraDistFromCenter;
-                visionY += Math.sin(trueAngle)*cameraDistFromCenter;
-                visionX = 127.628 - visionX;
-                visionY = 131.669 - visionY;
-                double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
-                double finalY = currentFollowerPose.getY() + KALMAN_TURRET * (visionY - currentFollowerPose.getY());
-                follower.setPose(new Pose(finalX, finalY, currentFollowerPose.getHeading()));
-            }
-        }
-        catch (Exception e) {
-            telemetryM.addData("Limelight error", e.getMessage());
-        }
-    }
+//    private void updatePose3(double dist){
+//         final double cameraDistFromCenter = 3.6875;
+//         final double cameraHeight = 10.76; // inches
+//         final double tagHeight = 29.5; // inches
+//         final double heightDif = tagHeight-cameraHeight;
+//        try {
+//            Pose currentFollowerPose = follower.getPose();
+//            double distanceFromTag = Math.sqrt(((dist*39.3701)*(dist*39.3701))- (heightDif*heightDif));
+//            double trueAngle = Math.toDegrees(follower.getHeading()) + bob.turretController.getTurretAngle();
+//            trueAngle = Math.toRadians(trueAngle);
+//            telemetryM.debug("limelight distance to target: " + distanceFromTag);
+//            if (Math.toDegrees(trueAngle) != 90) {
+//                double visionY = Math.sin(trueAngle) * distanceFromTag;
+//                double visionX = Math.cos(trueAngle) * distanceFromTag;
+//                visionX += Math.cos(trueAngle)*cameraDistFromCenter;
+//                visionY += Math.sin(trueAngle)*cameraDistFromCenter;
+//                visionX = 127.628 - visionX;
+//                visionY = 131.669 - visionY;
+//                double finalX = currentFollowerPose.getX() + KALMAN_TURRET * (visionX - currentFollowerPose.getX());
+//                double finalY = currentFollowerPose.getY() + KALMAN_TURRET * (visionY - currentFollowerPose.getY());
+//                follower.setPose(new Pose(finalX, finalY, currentFollowerPose.getHeading()));
+//            }
+//        }
+//        catch (Exception e) {
+//            telemetryM.addData("Limelight error", e.getMessage());
+//        }
+//    }
 
     private void Position(){
-        if (SHOW_POSITION){
-            Pose currentPose = follower.getPose();
-            telemetryM.debug("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
-
-            odoDistance = Math.sqrt(Math.pow((127.628 - follower.getPose().getX()), 2) + Math.pow((131.669 - follower.getPose().getY()), 2));
-            telemetryM.debug("odo distance to target: " + odoDistance);
-            telemetryM.update();
-        }
-        if (LL_LOCALIZATION){
-            LLResult result = limelight.getLatestResult();
-            if (result != null && result.isValid()) {
-                if (Math.abs(result.getTx()) < 0.5) {
-                    updatePose3(result.getBotposeAvgDist());
-                    telemetryM.debug("Limelight distance to target: " + result.getBotposeAvgDist());
-                }
-            } else {
-                telemetryM.addData("Limelight", "No Targets");
-            }
-        }
+//        if (SHOW_POSITION){
+//            Pose currentPose = follower.getPose();
+//            telemetryM.debug("Pedro Pose", String.format("x=%.2f in, y=%.2f in, h=%.1f deg", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+//
+//            odoDistance = Math.sqrt(Math.pow((127.628 - follower.getPose().getX()), 2) + Math.pow((131.669 - follower.getPose().getY()), 2));
+//            telemetryM.debug("odo distance to target: " + odoDistance);
+//            telemetryM.update();
+//        }
+//        if (LL_LOCALIZATION){
+//            LLResult result = limelight.getLatestResult();
+//            if (result != null && result.isValid()) {
+//                if (Math.abs(result.getTx()) < 0.5) {
+//                    updatePose3(result.getBotposeAvgDist());
+//                    telemetryM.debug("Limelight distance to target: " + result.getBotposeAvgDist());
+//                }
+//            } else {
+//                telemetryM.addData("Limelight", "No Targets");
+//            }
+//        }
     }
 
     private void Turret(){
@@ -133,12 +133,13 @@ public class CONFIGURE extends OpMode {
             telemetryM.debug("limelight distance: "+ limeDist);
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
-                limeDist = result.getBotposeAvgDist();
+                limeDist = 39.37*result.getBotposeAvgDist();
                 if ((turretAngle > 90.0 && result.getTx() > 0)
                         ||
                         (turretAngle < -135.0 && result.getTx() < 0)
                 ) bob.turretController.update(0, 0);
-               else bob.turretController.update(result.getTx(), follower.getAngularVelocity());
+             //  else bob.turretController.update(result.getTx(), follower.getAngularVelocity());
+                else bob.turretController.update(result.getTx(), 0);
             } else {
                 telemetryM.addData("Limelight", "No Targets");
                 bob.turretController.update(0,0);
