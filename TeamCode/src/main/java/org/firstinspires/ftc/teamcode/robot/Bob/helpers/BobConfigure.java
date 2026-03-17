@@ -14,6 +14,7 @@ public class BobConfigure {
     @Configurable
     public static class Position{
         public static boolean SHOW_POSITION = false;
+        public static boolean DRIVE = false;
         public static boolean LL_LOCALIZATION = false;
         public static double DISTANCE_TO_TARGET = 0;
     }

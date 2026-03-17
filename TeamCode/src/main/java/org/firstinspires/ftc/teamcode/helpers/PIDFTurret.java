@@ -50,43 +50,30 @@ public class PIDFTurret {
         return targetAngle;
     }
 
-    // Wraps angle error to [-180, 180] so turret always takes shortest path
     private double wrapError(double error) {
         while (error > 180) error -= 360;
         while (error < -180) error += 360;
         return error;
     }
 
-    /**
-     * @param currentAngle      current turret angle in degrees
-     * @param robotAngularVel   robot's angular velocity in degrees/sec from IMU
-     *                          pass 0.0 if not available
-     */
     public double update(double currentAngle, double robotAngularVel) {
 
-        //double robotAngularVelDeg = Math.toDegrees(robotAngularVel);
         double dt = timer.seconds();
         timer.reset();
-
-        // Clamp dt to avoid huge spikes on first loop or after a pause
+// clamp
         if (dt <= 0 || dt > 0.5) dt = 0.02;
 
         double error = wrapError(targetAngle - currentAngle);
 
-        // Integral with dt — consistent regardless of loop speed
         if (Math.abs(error) > 0.5) {
             integralSum += error * dt;
             integralSum = Range.clip(integralSum, -MAX_INTEGRAL / kI, MAX_INTEGRAL / kI);
         } else {
             integralSum = 0;
         }
-
-        // Derivative with dt — smooth, loop-speed independent
         double derivative = (error - lastError) / dt;
         lastError = error;
 
-        // True feedforward: counteract robot rotation proactively
-        // robotAngularVel in deg/s — tune kF so this roughly matches needed motor output
         double feedForward = kF * -robotAngularVel;
 
         double output = (kP * error)

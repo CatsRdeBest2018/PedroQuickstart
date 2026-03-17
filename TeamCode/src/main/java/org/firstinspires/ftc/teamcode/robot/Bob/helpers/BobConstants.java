@@ -23,7 +23,7 @@ public class BobConstants {
     public static double P = 2;
     public static double I = 0.4;
     public static double D = 0;
-    public static double F = 1;
+    public static double F = 1.1; 
     public static double TARGET_RPM = 0;
 
     // ==================== PIDF TURRET ====================
@@ -40,6 +40,7 @@ public class BobConstants {
 
     // ==================== STOPPER CONTROL ====================
     public static double STOPPER_STARTING_POS = 0;
+    public static double STOPPER_STOP = 0.15;
 
     // ==================== SPINDEXER ====================
     public static double TICKS_PER_REV_SPINDEXER = 8192;

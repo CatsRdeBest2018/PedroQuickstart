@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.robot.Bob;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.*;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -34,7 +36,7 @@ public class Bob implements Robot {
     public ShooterController shooterController = new ShooterController();
     public TurretController turretController = new TurretController();
     public HoodController hoodController = new HoodController();
-   // public StopperController stopperController = new StopperController();
+    public StopperController stopperController = new StopperController();
 
     public DcMotorEx intake;
     public DcMotorEx shooterRight;
@@ -46,7 +48,7 @@ public class Bob implements Robot {
     public Servo stopper;
 
     Limelight3A limelight;
-
+    public Follower follower;
     public boolean manualReset = false;
     public double manualPower = 0;
     // Pedro Pathing
@@ -66,7 +68,7 @@ public class Bob implements Robot {
         hood = hardwareMap.servo.get("hood");
 
         // STOPPER
-       // stopper = hardwareMap.servo.get("ballstop");
+        stopper = hardwareMap.servo.get("ballStop");
 
         // SHOOTERS
         shooterRight = (DcMotorEx) hardwareMap.dcMotor.get("sr");
@@ -106,7 +108,7 @@ public class Bob implements Robot {
         shooterController.start();
         turretController.start();
         hoodController.start();
-        //stopperController.start();
+        stopperController.start();
 
         hw = hardwareMap;
         runtime.reset();
@@ -164,8 +166,11 @@ public class Bob implements Robot {
         public void setRPM(double rpm) {
             shootPID.setTargetRPM(rpm);
         }
-        public void setRPMWithDistance(double distance) {
-            double rpm = (0.00642857 * distance + 1.9) * 1000;
+        public void setRPMWithDistance(double x) {
+            double rpm = 0.00126263 * x*x*x
+                    - 0.33658   * x*x
+                    + 31.03175  * x
+                    + 1619.04762;
             shootPID.setTargetRPM(rpm);
         }
 
@@ -188,22 +193,44 @@ public class Bob implements Robot {
         public void setHoodPos(double pos){
             hood.setPosition(pos);
         }
-        public void setHoodPosWithDistance(double distance){
-            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 100.0;
-            hood.setPosition(Range.clip(pos, 0.1, 0.7));
+//        public void setHoodPosWithDistance(double distance){
+//            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 100.0;
+//            hood.setPosition(Range.clip(pos, 0.1, 0.7));
+//        }
+    public void setHoodPosWithDistance(double distance, double rpm){
+        double D_MIN = 10.0;  // inches
+        double D_MAX = 90.0;  // inches
+        double R_MIN = 1700.0; // RPM
+        double R_MAX = 2600.0; // RPM
+        double d = (distance - D_MIN) / (D_MAX - D_MIN);
+        double r = (rpm    - R_MIN) / (R_MAX - R_MIN);
+
+        // 2d regression
+        double pos = 0.32307
+                + -1.20421 * r
+                +  1.21856 * r*r
+                + -0.43269 * r*r*r
+                +  1.50914 * d
+                + -0.01894 * d * r
+                + -1.06814 * d * r*r
+                + -0.67062 * d*d
+                +  1.64235 * d*d * r
+                + -0.59690 * d*d*d;
+        hood.setPosition(Range.clip(pos, 0.1, 0.7));
+    }
+    }
+
+    public class StopperController {
+        public void start() {
+            stopper.setPosition(STOPPER_STARTING_POS);
+        }
+        public double getStopperPos(){
+            return stopper.getPosition();
+        }
+        public void setStopperPos(double pos) {
+            stopper.setPosition(pos);
         }
     }
-//    public class StopperController {
-//        public void start() {
-//            stopper.setPosition(STOPPER_STARTING_POS);
-//        }
-//        public double getStopperPos(){
-//            return stopper.getPosition();
-//        }
-//        public void setStopperPos(double pos) {
-//            stopper.setPosition(pos);
-//        }
-//    }
 
     public class TurretController {
         private PIDFTurret turretPIDF;
@@ -263,8 +290,6 @@ public class Bob implements Robot {
             intakeRight.setPower(pow);
         }
     }
-
-
     public BobState macroState = null;
     public boolean MACROING = false;
     public ElapsedTime macroTimer = new ElapsedTime();
@@ -281,6 +306,7 @@ public class Bob implements Robot {
         MACROING = false;
         macroTimeout = INFINITY;
     }
+
     public void tickMacros() {
         if (!MACROING && macroTimer.milliseconds() > macroTimeout && macroTimeout != INFINITY) {
             macroTimeout = INFINITY;

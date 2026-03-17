@@ -27,8 +27,6 @@ public class PIDFShooter {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    // --- Constructors — same signatures as before ---
-
     public PIDFShooter(double ticksPerRev, double kP, double kI, double kD, double kF) {
         this(ticksPerRev, 6000, kP, kI, kD, kF); // default maxRPM, override with other constructor
     }
@@ -38,9 +36,6 @@ public class PIDFShooter {
         this.maxRPM      = maxRPM;
         setConsts(kP, kI, kD, kF);
     }
-
-    // --- Config — unchanged ---
-
     public void setConsts(double kP, double kI, double kD, double kF) {
         this.kP = kP;
         this.kI = kI;
@@ -58,8 +53,6 @@ public class PIDFShooter {
         timer.reset();
     }
 
-    // --- Getters/Setters — unchanged ---
-
     public void setTargetRPM(double rpm)  { this.targetRPM = rpm; }
     public double getTargetRPM()          { return targetRPM; }
     public double getCurrentRPM()         { return filteredRPM; }
@@ -68,9 +61,6 @@ public class PIDFShooter {
     public boolean isAtSpeed() {
         return targetRPM > 0 && Math.abs(targetRPM - filteredRPM) < RPM_TOLERANCE;
     }
-
-    // --- Internal ---
-
     private void updateRPM(double currentTicks, double dt) {
         if (firstSample) {
             firstSample = false;
@@ -83,7 +73,6 @@ public class PIDFShooter {
         filteredRPM       = RPM_ALPHA * rawRPM + (1.0 - RPM_ALPHA) * filteredRPM;
     }
 
-    // --- Main update — unchanged signature ---
     private double getFeedforward(double rpm) {
         double x = Range.clip(rpm / 1000.0, 1.5, 3.5); // clamp to your measured range
         return 1.86449  * Math.pow(x, 4)
@@ -127,12 +116,10 @@ public class PIDFShooter {
         }
         double iOutput = Range.clip(kI * integralSum, -MAX_I_OUTPUT, MAX_I_OUTPUT);
 
-        // Derivative
         double derivative = (error - lastError) / dt;
         lastError = error;
         double dOutput = kD * derivative;
 
-        // Ball drop boost — immediate extra power when RPM drops hard
         double boostOutput = 0;
         if ((targetRPM - filteredRPM) > RPM_DROP_THRESHOLD) {
             boostOutput = BOOST_OUTPUT;
