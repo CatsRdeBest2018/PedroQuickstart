@@ -38,10 +38,19 @@ public class Bob implements Robot {
     public HoodController hoodController = new HoodController();
     public StopperController stopperController = new StopperController();
 
+    public FrontTwoWheels frontTwoWheels = new FrontTwoWheels();
+
+
     public DcMotorEx intake;
     public DcMotorEx shooterRight;
     public DcMotorEx shooterLeft;
     public DcMotorEx turret;
+
+    public DcMotorEx frontLeft;
+    public DcMotorEx frontRight;
+    public DcMotorEx backLeft;
+    public DcMotorEx backRight;
+
     public CRServoImplEx intakeRight;
     public CRServoImplEx intakeLeft;
     public Servo hood;
@@ -63,6 +72,22 @@ public class Bob implements Robot {
     }
 
     public void initHardwareMap(HardwareMap hardwareMap) {
+
+        //DRIVE
+        frontLeft = (DcMotorEx) hardwareMap.dcMotor.get("fl");
+        frontLeft.setZeroPowerBehavior(BRAKE);
+        frontRight = (DcMotorEx) hardwareMap.dcMotor.get("fr");
+        frontRight.setZeroPowerBehavior(BRAKE);
+        backLeft = (DcMotorEx) hardwareMap.dcMotor.get("bl");
+        backLeft.setZeroPowerBehavior(BRAKE);
+        backRight = (DcMotorEx) hardwareMap.dcMotor.get("br");
+        backRight.setZeroPowerBehavior(BRAKE);
+
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         // HOOD
         hood = hardwareMap.servo.get("hood");
@@ -119,6 +144,7 @@ public class Bob implements Robot {
         tickMacros();
         intakeController.intakeTick();
         shooterController.update();
+        frontTwoWheels.runFrontTwoWheels();
     }
 
 
@@ -290,6 +316,18 @@ public class Bob implements Robot {
             intakeRight.setPower(pow);
         }
     }
+
+    public class FrontTwoWheels {
+        private double runPower = 0;
+        public void setFrontTwoWheelsPower(double power) {
+            runPower = power;
+        }
+        public void runFrontTwoWheels() {
+            frontLeft.setPower(runPower);
+            frontRight.setPower(runPower);
+        }
+    }
+
     public BobState macroState = null;
     public boolean MACROING = false;
     public ElapsedTime macroTimer = new ElapsedTime();

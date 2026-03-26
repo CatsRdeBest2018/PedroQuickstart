@@ -56,4 +56,9 @@ public class BobConfigure {
         public static double INTAKE_POWER = 0;
 
     }
+
+    @Configurable
+    public static class PTO {
+        public static double FrontTwoWheelsPower = 0.2;
+    }
 }

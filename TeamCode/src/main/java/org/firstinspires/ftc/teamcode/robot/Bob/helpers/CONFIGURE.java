@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_POS;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Intake.INTAKE_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Intake.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.FrontTwoWheelsPower;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.DISTANCE_TO_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.DRIVE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.LL_LOCALIZATION;
@@ -79,6 +80,7 @@ public class CONFIGURE extends OpMode {
         Hood();
         Stopper();
         Intake();
+        FrontTwoWheels();
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
         telemetryM.update();
@@ -187,6 +189,16 @@ public class CONFIGURE extends OpMode {
     private void Intake(){
         if (INTAKE_ON){
             bob.intakeController.setIntake(INTAKE_POWER);
+        }
+    }
+
+    public void FrontTwoWheels() {
+        if (gamepad1.a) {
+            bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
+            bob.frontTwoWheels.runFrontTwoWheels();
+        } else {
+            bob.frontTwoWheels.setFrontTwoWheelsPower(0);
+            bob.frontTwoWheels.runFrontTwoWheels();
         }
     }
 }
