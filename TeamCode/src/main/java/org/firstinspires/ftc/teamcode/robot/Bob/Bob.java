@@ -37,6 +37,7 @@ public class Bob implements Robot {
     public TurretController turretController = new TurretController();
     public HoodController hoodController = new HoodController();
     public StopperController stopperController = new StopperController();
+    public PTOServos ptoServos = new PTOServos();
 
     public FrontTwoWheels frontTwoWheels = new FrontTwoWheels();
 
@@ -55,6 +56,10 @@ public class Bob implements Robot {
     public CRServoImplEx intakeLeft;
     public Servo hood;
     public Servo stopper;
+
+    public Servo PTOLeft;
+    public Servo PTORight;
+
 
     Limelight3A limelight;
     public Follower follower;
@@ -129,6 +134,11 @@ public class Bob implements Robot {
         limelight.setPollRateHz(100);
         limelight.pipelineSwitch(0);
         limelight.start();
+
+        //PTO Servos
+        PTOLeft = hardwareMap.get(Servo.class, "PTOLeft");
+        PTORight = hardwareMap.get(Servo.class, "PTORight");
+
 
         shooterController.start();
         turretController.start();
@@ -324,8 +334,16 @@ public class Bob implements Robot {
         }
         public void runFrontTwoWheels() {
             frontLeft.setPower(runPower);
-            frontRight.setPower(runPower);
+            frontRight.setPower(-runPower);
         }
+    }
+
+    public class PTOServos {
+        public void setPTOPosition(double pos) {
+            PTOLeft.setPosition(pos);
+            PTORight.setPosition(pos);
+        }
+
     }
 
     public BobState macroState = null;

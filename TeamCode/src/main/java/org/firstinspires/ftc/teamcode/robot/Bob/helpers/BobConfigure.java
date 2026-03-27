@@ -60,5 +60,6 @@ public class BobConfigure {
     @Configurable
     public static class PTO {
         public static double FrontTwoWheelsPower = 0.2;
+        public static double PTO_Position;
     }
 }
