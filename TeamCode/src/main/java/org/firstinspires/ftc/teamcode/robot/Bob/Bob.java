@@ -339,13 +339,21 @@ public class Bob implements Robot {
     }
 
     public class PTOServos {
-        public void setPTOPosition(double pos) {
-            PTOLeft.setPosition(pos);
-            PTORight.setPosition(pos);
+        public void setPTOPosition(double pos1, double pos2) {
+            PTOLeft.setPosition(pos1);
+            PTORight.setPosition(pos2);
         }
 
     }
 
+//    public class liftController {
+//        public void engage() {
+//            ptoServos.setPTOPosition(SERVO_ENGAGED);
+//        }
+//        public void startLift() {
+//            frontTwoWheels.runFrontTwoWheels();
+//        }
+//    }
     public BobState macroState = null;
     public boolean MACROING = false;
     public ElapsedTime macroTimer = new ElapsedTime();

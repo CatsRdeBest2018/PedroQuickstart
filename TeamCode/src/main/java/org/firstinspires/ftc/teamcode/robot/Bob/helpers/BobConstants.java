@@ -75,4 +75,8 @@ public class BobConstants {
     public static double LIGHT1 = 0.33;
     public static double LIGHT0 = 0.0;
     public static double LSERVO = 0.0;
+
+    // LIFT
+    public static double SERVO_ENGAGED_LEFT = 0.05;
+    public static double SERVO_ENGAGED_RIGHT = 0;
 }

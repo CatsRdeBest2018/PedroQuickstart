@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Intake.INTAKE_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Intake.INTAKE_POWER;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.FrontTwoWheelsPower;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.PTO_In_Left;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.PTO_In_Right;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.PTO_Position;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.DISTANCE_TO_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.DRIVE;
@@ -74,7 +76,6 @@ public class CONFIGURE extends OpMode {
 
     public void loop() {
 
-
         Position();
         Turret();
         Shooter();
@@ -83,8 +84,9 @@ public class CONFIGURE extends OpMode {
         Intake();
         FrontTwoWheels();
         PTO();
-        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
-        follower.update();
+
+        //follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        //follower.update();
         telemetryM.update();
     }
     private void updatePose3(double dist){
@@ -195,7 +197,7 @@ public class CONFIGURE extends OpMode {
     }
 
     public void FrontTwoWheels() {
-        if (gamepad1.a) {
+        if (true) {
             bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
             bob.frontTwoWheels.runFrontTwoWheels();
         } else {
@@ -205,8 +207,8 @@ public class CONFIGURE extends OpMode {
     }
 
     public void PTO() {
-        if (gamepad1.x) {
-            bob.ptoServos.setPTOPosition(PTO_Position);
+        if (true) {
+            bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
         }
     }
 }
