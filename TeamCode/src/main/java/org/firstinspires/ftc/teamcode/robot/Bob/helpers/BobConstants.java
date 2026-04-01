@@ -36,7 +36,7 @@ public class BobConstants {
     public static double DISTANCE_FROM_TARGET = 0;
 
     // ==================== HOOD CONTROL ====================
-    public static double HOOD_STARTING_POS = 0.2;
+    public static double HOOD_STARTING_POS = 0.5;
 
     // ==================== STOPPER CONTROL ====================
     public static double STOPPER_STARTING_POS = 0;

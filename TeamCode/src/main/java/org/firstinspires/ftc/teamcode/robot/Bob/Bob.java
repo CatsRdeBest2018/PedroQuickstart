@@ -105,11 +105,12 @@ public class Bob implements Robot {
         shooterRight.setZeroPowerBehavior(FLOAT);
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterLeft = (DcMotorEx) hardwareMap.dcMotor.get("sl");
         shooterLeft.setZeroPowerBehavior(FLOAT);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         // TURRET
         turret = (DcMotorEx) hardwareMap.dcMotor.get("turret");
