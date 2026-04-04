@@ -6,6 +6,10 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tD;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tF;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tI;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.tP;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.taD;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.taF;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.taI;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.taP;
 
 import com.bylazar.configurables.annotations.Configurable;
 
@@ -30,8 +34,20 @@ public class BobConfigure {
 
     }
     @Configurable
+    public static class AngularTuning{
+        public static boolean TURRET_ON = false;
+        public static boolean ANGULAR_VEL_TUN = false;
+        public static double TARGET_ANG_VEL_1 = 0;
+        public static double aP = taP;
+        public static double aI = taI;
+        public static double aD = taD;
+        public static double aF = taF;
+    }
+    @Configurable
     public static class Turret{
         public static boolean TURRET_ON = false;
+        public static boolean ANGULAR_VEL_TUN = false;
+        public static double TARGET_ANG_VEL = 0;
         public static double P = tP;
         public static double I = tI;
         public static double D = tD;

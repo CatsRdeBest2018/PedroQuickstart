@@ -21,6 +21,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.helpers.AngTuning;
+import org.firstinspires.ftc.teamcode.helpers.BLPIDFShooter;
 import org.firstinspires.ftc.teamcode.helpers.PIDFShooter;
 import org.firstinspires.ftc.teamcode.helpers.PIDFTurret;
 import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure;
@@ -35,8 +37,11 @@ public class Bob implements Robot {
     public IntakeController intakeController = new IntakeController();
     public ShooterController shooterController = new ShooterController();
     public TurretController turretController = new TurretController();
+
     public HoodController hoodController = new HoodController();
     public StopperController stopperController = new StopperController();
+
+    public AngTuningController angTuningController = new AngTuningController();
     public PTOServos ptoServos = new PTOServos();
 
     public FrontTwoWheels frontTwoWheels = new FrontTwoWheels();
@@ -145,6 +150,7 @@ public class Bob implements Robot {
         turretController.start();
         hoodController.start();
         stopperController.start();
+        angTuningController.start();
 
         hw = hardwareMap;
         runtime.reset();
@@ -165,9 +171,9 @@ public class Bob implements Robot {
         double ticksT;
         double leftPos;
         double rightPos;
-        private PIDFShooter shootPID;
+        private BLPIDFShooter shootPID;
         public void start() {
-            shootPID = new PIDFShooter(TICKS_PER_REV_SHOOTER,3000, P, I, D,F);
+            shootPID = new BLPIDFShooter(TICKS_PER_REV_SHOOTER,3000, P, I, D,F);
             shootPID.reset(0);
         }
 
@@ -284,7 +290,7 @@ public class Bob implements Robot {
         public void setTurretConsts(){
             turretPIDF.setConsts(tP,tI,tD,tF);
         }
-        public void configureTurretConsts(){
+        public void configureConsts(){
             turretPIDF.setConsts(
                     BobConfigure.Turret.P,BobConfigure.Turret.I,BobConfigure.Turret.D,BobConfigure.Turret.F
             );
@@ -304,6 +310,43 @@ public class Bob implements Robot {
 
     }
 
+    public class AngTuningController {
+        private AngTuning angTuning;
+        public void start() {
+            angTuning = new AngTuning(taP, taI, taD,taF);
+            angTuning.reset();
+        }
+        public double getTurretAngle(){
+            return angTuning.getTurretAngle(turret.getCurrentPosition());
+        }
+        public double getTurretTicks(){
+            return turret.getCurrentPosition();
+        }
+        public void setTurretConsts(){
+            angTuning.setConsts(taP,taI,taD,taF);
+        }
+        public void configureConsts(){
+            angTuning.setConsts(
+                    BobConfigure.AngularTuning.aP,BobConfigure.AngularTuning.aI,BobConfigure.AngularTuning.aD,BobConfigure.AngularTuning.aF
+            );
+        }
+
+
+        public void update(double error){
+            double power = angTuning.update(error, 0);
+            backLeft.setPower(-power);
+            frontLeft.setPower(-power);
+            backRight.setPower(power);
+            frontRight.setPower(power);
+        }
+        public void setTargetAngle(double angle) {
+            angTuning.setTargetAngle(angle);
+        }
+        public double getTargetAngle(){
+            return angTuning.getTargetAngle();
+        }
+
+    }
 
     public class IntakeController {
         private double intakePower = 0;

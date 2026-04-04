@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.Bob.helpers;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.TARGET_ANG_VEL_1;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_POS;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Intake.INTAKE_ON;
@@ -17,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shoo
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.USE_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_POS;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.ANGULAR_VEL_TUN;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.DISTANCE_FROM_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
@@ -78,6 +80,7 @@ public class CONFIGURE extends OpMode {
 
         Position();
         Turret();
+        AngularTuning();
         Shooter();
         Hood();
         Stopper();
@@ -85,8 +88,8 @@ public class CONFIGURE extends OpMode {
         FrontTwoWheels();
         PTO();
 
-        //follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
-        //follower.update();
+        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        follower.update();
         telemetryM.update();
     }
     private void updatePose3(double dist){
@@ -145,7 +148,7 @@ public class CONFIGURE extends OpMode {
 
     private void Turret(){
         if (TURRET_ON){
-            bob.turretController.configureTurretConsts();
+            bob.turretController.configureConsts();
             double turretAngle = bob.turretController.getTurretAngle();
             telemetryM.debug("Current Turret Angle: "+ turretAngle);
             telemetryM.debug("Current Turret Ticks: "+ bob.turretController.getTurretTicks());
@@ -163,6 +166,15 @@ public class CONFIGURE extends OpMode {
                 telemetryM.addData("Limelight", "No Targets");
                 bob.turretController.update(0,0);
             }
+
+        }
+    }
+    private void AngularTuning(){
+        if (ANGULAR_VEL_TUN){
+            telemetryM.debug("Current Ang Vel: "+follower.getAngularVelocity());
+            double error = TARGET_ANG_VEL_1 - follower.getAngularVelocity();
+            bob.angTuningController.configureConsts();
+            bob.angTuningController.update(error);
         }
     }
 
@@ -175,6 +187,7 @@ public class CONFIGURE extends OpMode {
             bob.shooterController.update();
             telemetryM.debug("Current RPM: "+bob.shooterController.getCurrentRPM());
             telemetryM.debug("Target RPM "+BobConfigure.Shooter.TARGET_RPM);
+            telemetryM.debug("real power "+bob.shooterController.getPower());
         }
 
     }
@@ -197,18 +210,18 @@ public class CONFIGURE extends OpMode {
     }
 
     public void FrontTwoWheels() {
-        if (true) {
-            bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
-            bob.frontTwoWheels.runFrontTwoWheels();
-        } else {
-            bob.frontTwoWheels.setFrontTwoWheelsPower(0);
-            bob.frontTwoWheels.runFrontTwoWheels();
-        }
+//        if (false) {
+//            bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
+//            bob.frontTwoWheels.runFrontTwoWheels();
+//        } else {
+//            bob.frontTwoWheels.setFrontTwoWheelsPower(0);
+//            bob.frontTwoWheels.runFrontTwoWheels();
+//        }
     }
 
     public void PTO() {
-        if (true) {
-            bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
-        }
+//        if (false) {
+//            bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
+//        }
     }
 }
