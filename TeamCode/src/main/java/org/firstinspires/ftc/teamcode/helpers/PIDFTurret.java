@@ -56,7 +56,7 @@ public class PIDFTurret {
         return error;
     }
 
-    public double update(double currentAngle, double robotAngularVel) {
+    public double update(double currentAngle, double r) {
 
         double dt = timer.seconds();
         timer.reset();
@@ -74,7 +74,14 @@ public class PIDFTurret {
         double derivative = (error - lastError) / dt;
         lastError = error;
 
-        double feedForward = kF * -robotAngularVel;
+        double abs_r = Math.abs(r);
+        double feedForward = Math.signum(r) * (
+                0
+                + 0.158122 * abs_r
+                +  -0.0259028 * abs_r*abs_r
+                + 0.00578704 * abs_r*abs_r*abs_r
+                +  -0.000625 * abs_r*abs_r*abs_r*abs_r);
+        feedForward = -feedForward * kF;
 
         double output = (kP * error)
                 + (kI * integralSum)

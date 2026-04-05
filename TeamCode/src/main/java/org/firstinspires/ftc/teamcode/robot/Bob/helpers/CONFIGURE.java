@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.Bob.helpers;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.ANGULAR_VEL_TUN;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.F_TUNE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.TARGET_ANG_VEL_1;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.TURRET_F_TUN;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_POS;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Intake.INTAKE_ON;
@@ -18,7 +21,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shoo
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.USE_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_POS;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.ANGULAR_VEL_TUN;
+
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.DISTANCE_FROM_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
@@ -69,8 +72,8 @@ public class CONFIGURE extends OpMode {
     @Override
     public void start() {
         limelight.start();
-        follower.startTeleopDrive();
         follower.update();
+        if (!ANGULAR_VEL_TUN) follower.startTeleopDrive();
     }
 
     @SuppressLint("DefaultLocale")
@@ -88,7 +91,7 @@ public class CONFIGURE extends OpMode {
         FrontTwoWheels();
         PTO();
 
-        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        if (!ANGULAR_VEL_TUN) follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
         telemetryM.update();
     }
@@ -172,9 +175,20 @@ public class CONFIGURE extends OpMode {
     private void AngularTuning(){
         if (ANGULAR_VEL_TUN){
             telemetryM.debug("Current Ang Vel: "+follower.getAngularVelocity());
+            telemetryM.debug("real power "+bob.angTuningController.getPower());
             double error = TARGET_ANG_VEL_1 - follower.getAngularVelocity();
             bob.angTuningController.configureConsts();
             bob.angTuningController.update(error);
+        }
+        if (TURRET_F_TUN){
+            double turretAngle = bob.turretController.getTurretAngle();
+            telemetryM.debug("Turret Angle: "+ turretAngle);
+            telemetryM.debug("Turret Ticks: "+ bob.turretController.getTurretTicks());
+            telemetryM.debug("Angular Vel: "+ follower.getAngularVelocity());
+
+            boolean atLimit = (turretAngle > 90.0 || turretAngle < -135.0);
+            if (atLimit) bob.turretController.setPower(0);
+            else bob.turretController.setPower(F_TUNE);
         }
     }
 

@@ -35,9 +35,11 @@ public class BobConfigure {
     }
     @Configurable
     public static class AngularTuning{
-        public static boolean TURRET_ON = false;
         public static boolean ANGULAR_VEL_TUN = false;
+        public static boolean TURRET_F_TUN = false;
+
         public static double TARGET_ANG_VEL_1 = 0;
+        public static double F_TUNE = 0;
         public static double aP = taP;
         public static double aI = taI;
         public static double aD = taD;
@@ -46,8 +48,6 @@ public class BobConfigure {
     @Configurable
     public static class Turret{
         public static boolean TURRET_ON = false;
-        public static boolean ANGULAR_VEL_TUN = false;
-        public static double TARGET_ANG_VEL = 0;
         public static double P = tP;
         public static double I = tI;
         public static double D = tD;

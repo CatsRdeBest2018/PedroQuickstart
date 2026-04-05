@@ -297,6 +297,9 @@ public class Bob implements Robot {
         }
 
 
+        public void setPower(double pow){
+            turret.setPower(pow);
+        }
         public void update(double currentAngle, double angVel){
             double power = turretPIDF.update(currentAngle, angVel);
             turret.setPower(-power);
@@ -312,13 +315,12 @@ public class Bob implements Robot {
 
     public class AngTuningController {
         private AngTuning angTuning;
+        double powerR = 0;
         public void start() {
             angTuning = new AngTuning(taP, taI, taD,taF);
             angTuning.reset();
         }
-        public double getTurretAngle(){
-            return angTuning.getTurretAngle(turret.getCurrentPosition());
-        }
+      
         public double getTurretTicks(){
             return turret.getCurrentPosition();
         }
@@ -334,13 +336,17 @@ public class Bob implements Robot {
 
         public void update(double error){
             double power = angTuning.update(error, 0);
-            backLeft.setPower(-power);
-            frontLeft.setPower(-power);
-            backRight.setPower(power);
-            frontRight.setPower(power);
+            powerR = power;
+            backLeft.setPower(power);
+            frontLeft.setPower(power);
+            backRight.setPower(-power);
+            frontRight.setPower(-power);
         }
         public void setTargetAngle(double angle) {
             angTuning.setTargetAngle(angle);
+        }
+        public double getPower() {
+            return powerR;
         }
         public double getTargetAngle(){
             return angTuning.getTargetAngle();

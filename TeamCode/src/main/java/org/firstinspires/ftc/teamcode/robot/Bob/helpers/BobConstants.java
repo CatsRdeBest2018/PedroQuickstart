@@ -29,10 +29,10 @@ public class BobConstants {
     // ==================== PIDF TURRET ====================
     public static double TICKS_PER_REV_TURRET = 1600;
     public static double KALMAN_TURRET = 0.1;
-    public static double tP = 0.017;
-    public static double tI = 0.05;
+    public static double tP = 0.01;
+    public static double tI = 0.02;
     public static double tD = 0.0014;
-    public static double tF = 0.15;
+    public static double tF = 1;
     public static double DISTANCE_FROM_TARGET = 0;
 
     // ==================== HOOD CONTROL ====================
@@ -80,8 +80,8 @@ public class BobConstants {
     public static double SERVO_ENGAGED_LEFT = 0.05;
     public static double SERVO_ENGAGED_RIGHT = 0;
 
-    public static double taP = 0;
-    public static double taI = 0;
+    public static double taP = 0.65;
+    public static double taI = 0.5;
     public static double taD = 0;
     public static double taF = 0;
 }
