@@ -35,7 +35,7 @@ public class OrganizedAuto extends OpMode {
 
 
 
-    private double timeForShooting3 = 1.0;
+    private double timeForShooting3 = 1.3;
 
     private final Pose startPose = new Pose(115.446, 125.988, Math.toRadians(45)); // Start Pose of our robot.
 
@@ -56,28 +56,38 @@ public class OrganizedAuto extends OpMode {
 
     public void buildPaths() {
 
-        Shot1 = follower.pathBuilder()
-                .addPath(
+//        Shot1 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(
+//                                new Pose(115.446, 125.988),
+//                                new Pose(90.231, 82.871)
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+//                .build();
+        Shot1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(115.446, 125.988),
-                                new Pose(90.231, 82.871)
+                                new Pose(117.324, 128.910),
+
+
+                                new Pose(84.703, 92.028)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
                 .build();
+
 
         Intake1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Pose(90.338, 83.054),
-                                new Pose(99.956, 58.392)
+                                new Pose(99.956, 56.392)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .addPath(
                         new BezierLine(
-                                new Pose(99.956, 58.392),
-                                new Pose(126.819, 58.378)
+                                new Pose(99.956, 56.392),
+                                new Pose(126.819, 56.378)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
@@ -86,7 +96,7 @@ public class OrganizedAuto extends OpMode {
         Shot2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(126.819, 58.378),
+                                new Pose(126.819, 56.378),
                                 new Pose(90.231, 82.871)
                         )
                 )
@@ -99,7 +109,7 @@ public class OrganizedAuto extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(90.231, 82.871),
-                                new Pose(132.032, 57.611)
+                                new Pose(130.032, 56.500)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
@@ -108,7 +118,7 @@ public class OrganizedAuto extends OpMode {
         Shot3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(132.032, 57.611),
+                                new Pose(132.032, 56.500),
                                 new Pose(90.231, 82.871)
                         )
                 )
@@ -358,7 +368,7 @@ public class OrganizedAuto extends OpMode {
             }
     }
     private void Shooter(){
-            bob.shooterController.setRPMWithDistance(50);
+            bob.shooterController.setRPMWithDistance(52);
             bob.shooterController.configureConsts();
             bob.shooterController.update();
 
@@ -366,7 +376,7 @@ public class OrganizedAuto extends OpMode {
 
     private void Hood(){
 
-            bob.hoodController.setHoodPosWithDistance(50);
+            bob.hoodController.setHoodPosWithDistance(52);
 
     }
 

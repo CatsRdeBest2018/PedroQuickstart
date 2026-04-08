@@ -249,6 +249,7 @@ public class Bob implements Robot {
                 + -0.344286 * r
                 +  0.0692857 * r*r
                 + -0.005 * r*r*r;
+
         hood.setPosition(Range.clip(pos, 0.3, 0.5));
     }
     }
