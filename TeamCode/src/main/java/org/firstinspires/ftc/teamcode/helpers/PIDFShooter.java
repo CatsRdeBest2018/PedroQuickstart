@@ -20,7 +20,7 @@ public class PIDFShooter {
     private static final double MAX_I_OUTPUT = 0.15;
     private static final double RPM_TOLERANCE = 200;
     private static final double RPM_DROP_THRESHOLD = 200;
-    private static final double BOOST_OUTPUT = 0.05;
+    private static final double BOOST_OUTPUT = 0.15;
 
     private double integralSum = 0;
     private double lastError   = 0;
@@ -81,16 +81,12 @@ public class PIDFShooter {
     }
 
     private double getFeedforward(double rpm) {
-        double x = Range.clip(rpm / 1000.0, 1.5, 3.5); // clamp to your measured range
-        return 1.86449  * Math.pow(x, 4)
-                - 18.64883 * Math.pow(x, 3)
-                + 69.41847 * Math.pow(x, 2)
-                - 114.13428 * x
-                + 71.00255;
-    }
-    private double getFeedforward2(double rpm) {
-        double x = Range.clip(rpm / 1000.0, 1.5, 3.5); // clamp to your measured range
-        return 1.06835 / (1 + Math.exp(-(4.27897 * x - 6.26462)));
+        double x = Range.clip(rpm / 1000.0, 0, 5.73);
+        return -0.00158144  * Math.pow(x, 4)
+                + 0.0214144 * Math.pow(x, 3)
+                - 0.0924621 * Math.pow(x, 2)
+                + 0.298742 * x
+                + 0;
     }
 
     public double update(double currentTicks) {
@@ -107,7 +103,7 @@ public class PIDFShooter {
         }
 
         if (firstSample) {
-            return Range.clip(kF * getFeedforward2(targetRPM) * getFeedforward(targetRPM), 0, 1);
+            return Range.clip(kF * getFeedforward(targetRPM), 0, 1);
         }
 
         double normalizedTarget  = targetRPM  / maxRPM;
@@ -115,7 +111,7 @@ public class PIDFShooter {
         double error             = normalizedTarget - normalizedCurrent;
 
         // Feedforward — polynomial only, kF trims it
-        double ffOutput = kF * getFeedforward2(targetRPM) * getFeedforward(targetRPM) * normalizedTarget;
+        double ffOutput = kF * getFeedforward(targetRPM);
 
         // Proportional
         double pOutput = kP * error;

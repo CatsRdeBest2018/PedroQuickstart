@@ -209,7 +209,7 @@ public class CONFIGURE extends OpMode {
     private void Hood(){
         if (HOOD_ON){
             if (!BobConfigure.Hood.USE_DISTANCE) bob.hoodController.setHoodPos(HOOD_POS);
-            else bob.hoodController.setHoodPosWithDistance(limeDist, currentRPM);
+            else bob.hoodController.setHoodPosWithDistance(limeDist);
         }
     }
     private void Stopper(){

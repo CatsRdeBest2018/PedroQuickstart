@@ -171,9 +171,9 @@ public class Bob implements Robot {
         double ticksT;
         double leftPos;
         double rightPos;
-        private BLPIDFShooter shootPID;
+        private PIDFShooter shootPID;
         public void start() {
-            shootPID = new BLPIDFShooter(TICKS_PER_REV_SHOOTER,3000, P, I, D,F);
+            shootPID = new PIDFShooter(TICKS_PER_REV_SHOOTER,6000, P, I, D,F);
             shootPID.reset(0);
         }
 
@@ -209,11 +209,13 @@ public class Bob implements Robot {
         public void setRPM(double rpm) {
             shootPID.setTargetRPM(rpm);
         }
-        public void setRPMWithDistance(double x) {
-            double rpm = 0.00126263 * x*x*x
-                    - 0.33658   * x*x
-                    + 31.03175  * x
-                    + 1619.04762;
+        public void setRPMWithDistance(double dist) {
+            double x = dist/10;
+            double rpm = 0.0471014 * x*x*x
+                    - 0.588199   * x*x
+                    + 2.42091  * x
+                    + 0.0158385;
+            rpm = rpm*1000;
             shootPID.setTargetRPM(rpm);
         }
 
@@ -240,26 +242,14 @@ public class Bob implements Robot {
 //            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 100.0;
 //            hood.setPosition(Range.clip(pos, 0.1, 0.7));
 //        }
-    public void setHoodPosWithDistance(double distance, double rpm){
-        double D_MIN = 10.0;  // inches
-        double D_MAX = 90.0;  // inches
-        double R_MIN = 1700.0; // RPM
-        double R_MAX = 2600.0; // RPM
-        double d = (distance - D_MIN) / (D_MAX - D_MIN);
-        double r = (rpm    - R_MIN) / (R_MAX - R_MIN);
-
+    public void setHoodPosWithDistance(double dist){
         // 2d regression
-        double pos = 0.32307
-                + -1.20421 * r
-                +  1.21856 * r*r
-                + -0.43269 * r*r*r
-                +  1.50914 * d
-                + -0.01894 * d * r
-                + -1.06814 * d * r*r
-                + -0.67062 * d*d
-                +  1.64235 * d*d * r
-                + -0.59690 * d*d*d;
-        hood.setPosition(Range.clip(pos, 0.1, 0.7));
+        double r = dist/10;
+        double pos = 0.95
+                + -0.344286 * r
+                +  0.0692857 * r*r
+                + -0.005 * r*r*r;
+        hood.setPosition(Range.clip(pos, 0.3, 0.5));
     }
     }
 
