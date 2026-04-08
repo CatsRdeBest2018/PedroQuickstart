@@ -43,7 +43,6 @@ public class OrganizedAuto extends OpMode {
     private PathState pathState = PathState.INIT;
     private Shooting shooting = Shooting.START_SHOOTING;
 
-
     public PathChain Shot1;
     public PathChain Intake1;
     public PathChain Shot2;
@@ -92,7 +91,6 @@ public class OrganizedAuto extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .setReversed()
                 .build();
 
 
@@ -225,6 +223,9 @@ public class OrganizedAuto extends OpMode {
                 case WAITING:
                     WaitingForPath();
                     break;
+//                case INTAKING:
+//                    Intaking();
+//                    break;
             }
         }
 
@@ -278,6 +279,9 @@ public class OrganizedAuto extends OpMode {
     public void init() {
         // init map
         bob.init(hardwareMap);
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.pipelineSwitch(0);
 
         //timers
         shootTimer = new Timer();
@@ -301,6 +305,7 @@ public class OrganizedAuto extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+        limelight.start();
     }
 
     /**
@@ -353,19 +358,16 @@ public class OrganizedAuto extends OpMode {
             }
     }
     private void Shooter(){
-        if (SHOOTER_ON){
             bob.shooterController.setRPMWithDistance(50);
             bob.shooterController.configureConsts();
             bob.shooterController.update();
 
-        }
-
     }
 
     private void Hood(){
-        if (HOOD_ON){
+
             bob.hoodController.setHoodPosWithDistance(50);
-        }
+
     }
 
 }
