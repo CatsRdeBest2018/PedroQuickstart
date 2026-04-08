@@ -1,7 +1,15 @@
 package org.firstinspires.ftc.teamcode.drive.tests;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_ON;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_POS;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.SHOOTER_ON;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.USE_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_ON;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_POS;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_X;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_Y;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.STOPPER_STOP;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -9,12 +17,14 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
+import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure;
 
 @Autonomous
 public class OrganizedAuto extends OpMode {
@@ -27,7 +37,7 @@ public class OrganizedAuto extends OpMode {
 
     private double timeForShooting3 = 1.0;
 
-    private final Pose startPose = new Pose(117.32413793103447, 128.9103448275862, Math.toRadians(45)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(115.446, 125.988, Math.toRadians(45)); // Start Pose of our robot.
 
     private BotState botState = BotState.INIT;
     private PathState pathState = PathState.INIT;
@@ -47,62 +57,66 @@ public class OrganizedAuto extends OpMode {
 
     public void buildPaths() {
 
-        Shot1 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(117.324, 128.910),
-
-                                new Pose(84.703, 92.028)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
-                .build();
-
-        Intake1 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(84.703, 92.028),
-                                new Pose(102.879, 83.069),
-                                new Pose(103.152, 83.386),
-                                new Pose(123.000, 83.421)
-                        )
-                ).setTangentHeadingInterpolation()
-
-                .build();
-
-        Shot2 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(123.000, 83.421),
-                                new Pose(102.352, 81.838),
-                                new Pose(84.483, 92.131)
-                        )
-                ).setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
-
-        Intake2 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(84.483, 92.131),
-                                new Pose(90.355, 54.290),
-                                new Pose(92.852, 57.821),
-                                new Pose(132.283, 58.214)
-                        )
-                ).setTangentHeadingInterpolation()
-
-                .build();
-        Shot3 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(132.283, 58.214),
-                                new Pose(102.848, 73.145),
-                                new Pose(84.310, 91.566)
-                        )
-                ).setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
-        park = follower
-                .pathBuilder()
+        Shot1 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(85, 85), new Pose(102.8923076923077, 66.21538461538462))
+                        new BezierLine(
+                                new Pose(115.446, 125.988),
+                                new Pose(90.231, 82.871)
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(-15))
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
+
+        Intake1 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(90.338, 83.054),
+                                new Pose(99.956, 58.392)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        new BezierLine(
+                                new Pose(99.956, 58.392),
+                                new Pose(126.819, 58.378)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+
+        Shot2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(126.819, 58.378),
+                                new Pose(90.231, 82.871)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setReversed()
+                .build();
+
+
+
+        Intake2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(90.231, 82.871),
+                                new Pose(132.032, 57.611)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .build();
+
+        Shot3 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(132.032, 57.611),
+                                new Pose(90.231, 82.871)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .build();
+
     }
 
     public enum BotState{
@@ -129,14 +143,14 @@ public class OrganizedAuto extends OpMode {
         switch (shooting){
             case START_SHOOTING:
                 intake();
-                //bob.stopperController.open();
+                bob.stopperController.open();
                 shootTimer.resetTimer();
                 shooting = Shooting.END_SHOOTING;
                 break;
             case END_SHOOTING:
                 if (shootTimer.getElapsedTimeSeconds() >= timeForShooting3){
                     stopIntake();
-                    //bob.stopperController.close();
+                    bob.stopperController.close();
                     shooting = Shooting.START_SHOOTING;
                     setBotState(BotState.PATHING);
                 }
@@ -250,6 +264,9 @@ public class OrganizedAuto extends OpMode {
     @Override
     public void loop() {
 
+        Hood();
+        Shooter();
+        Turret();
         StateUpdate();
         follower.update();
         bob.tick();
@@ -317,6 +334,38 @@ public class OrganizedAuto extends OpMode {
         telemetry.addLine( "y: "+ LAST_Y);
         telemetry.addLine( "heading: "+ LAST_HEADING);
         telemetry.update();
+    }
+    private void Turret(){
+            bob.turretController.configureConsts();
+            double turretAngle = bob.turretController.getTurretAngle();
+
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+//                limeDist = 39.37*result.getBotposeAvgDist();
+                if ((turretAngle > 90.0 && result.getTx() > 0)
+                        ||
+                        (turretAngle < -135.0 && result.getTx() < 0)
+                ) bob.turretController.update(0, 0);
+                else bob.turretController.update(result.getTx(), follower.getAngularVelocity());
+                // else bob.turretController.update(result.getTx(), 0);
+            } else {
+                bob.turretController.update(0,0);
+            }
+    }
+    private void Shooter(){
+        if (SHOOTER_ON){
+            bob.shooterController.setRPMWithDistance(50);
+            bob.shooterController.configureConsts();
+            bob.shooterController.update();
+
+        }
+
+    }
+
+    private void Hood(){
+        if (HOOD_ON){
+            bob.hoodController.setHoodPosWithDistance(50);
+        }
     }
 
 }

@@ -263,6 +263,12 @@ public class Bob implements Robot {
         public void setStopperPos(double pos) {
             stopper.setPosition(pos);
         }
+        public void open() {
+            stopper.setPosition(STOPPER_STARTING_POS);
+        }
+        public void close() {
+            stopper.setPosition(STOPPER_STOP);
+        }
     }
 
     public class TurretController {
