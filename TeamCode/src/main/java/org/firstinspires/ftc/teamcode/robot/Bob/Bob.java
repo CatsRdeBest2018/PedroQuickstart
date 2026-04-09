@@ -211,10 +211,11 @@ public class Bob implements Robot {
         }
         public void setRPMWithDistance(double dist) {
             double x = dist/10;
-            double rpm = 0.0471014 * x*x*x
-                    - 0.588199   * x*x
-                    + 2.42091  * x
-                    + 0.0158385;
+//            double rpm = 0.0471014 * x*x*x
+//                    - 0.588199   * x*x
+//                    + 2.42091  * x
+//                    + 0.0158385;
+            double rpm = 2.57606 * Math.pow(x,0.180193);
             rpm = rpm*1000;
             shootPID.setTargetRPM(rpm);
         }
