@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shoo
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_POS;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.I;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_X;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_Y;
@@ -29,13 +30,14 @@ import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure;
 @Autonomous
 public class OrganizedAuto extends OpMode {
     private final Bob bob = new Bob();
-    private Timer shootTimer, correctionTimer, opmodeTimer;
+    private Timer shootTimer, correctionTimer, opmodeTimer, intakeTimer;
     Limelight3A limelight;
     private Follower follower;
 
 
 
     private double timeForShooting3 = 1.3;
+    private double timeForIntakingGate = 2;
 
     private final Pose startPose = new Pose(115.446, 125.988, Math.toRadians(45)); // Start Pose of our robot.
 
@@ -43,8 +45,11 @@ public class OrganizedAuto extends OpMode {
     private PathState pathState = PathState.INIT;
     private Shooting shooting = Shooting.START_SHOOTING;
 
+    private Intaking intaking = Intaking.START_INTAKING;
+
     public PathChain Shot1;
     public PathChain Intake1;
+    public PathChain Intake1Setup;
     public PathChain Shot2;
     public PathChain Intake2;
     public PathChain Shot3;
@@ -56,15 +61,6 @@ public class OrganizedAuto extends OpMode {
 
     public void buildPaths() {
 
-//        Shot1 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(
-//                                new Pose(115.446, 125.988),
-//                                new Pose(90.231, 82.871)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
-//                .build();
         Shot1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(117.324, 128.910),
@@ -76,7 +72,7 @@ public class OrganizedAuto extends OpMode {
                 .build();
 
 
-        Intake1 = follower.pathBuilder()
+        Intake1Setup = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Pose(90.338, 83.054),
@@ -84,6 +80,8 @@ public class OrganizedAuto extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .build();
+        Intake1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Pose(99.956, 56.392),
@@ -125,17 +123,29 @@ public class OrganizedAuto extends OpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(90.231, 82.871),
+                                new Pose(85, 90)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
+                .build();
+
     }
 
     public enum BotState{
         INIT,
         SHOOTING,
         PATHING,
-        WAITING
+        WAITING,
+        INTAKING
     }
     public enum PathState{
         INIT,
         SHOOT1,
+        INTAKE1SETUP,
         INTAKE1,
         SHOOT2,
         INTAKE2,
@@ -146,7 +156,27 @@ public class OrganizedAuto extends OpMode {
         START_SHOOTING,
         END_SHOOTING
     }
+    public enum Intaking{
+        START_INTAKING,
+        END_INTAKING
+    }
 
+    public void Intaking(){
+        switch (intaking){
+            case START_INTAKING:
+                intake();
+                intakeTimer.resetTimer();
+                intaking = Intaking.END_INTAKING;
+                break;
+            case END_INTAKING:
+                if (intakeTimer.getElapsedTimeSeconds() >= timeForIntakingGate){
+                    stopIntake();
+                    intaking = Intaking.START_INTAKING;
+                    setBotState(BotState.PATHING);
+                }
+                break;
+        }
+    }
     public void Shooting(){
         switch (shooting){
             case START_SHOOTING:
@@ -164,13 +194,15 @@ public class OrganizedAuto extends OpMode {
                 }
                 break;
         }
-
-
     }
     public void PathEnd(){
         switch(pathState){
             case SHOOT1: // shoot 1 ends
                 setBotState(BotState.SHOOTING);
+                setPathState(PathState.INTAKE1SETUP);
+                break;
+            case INTAKE1SETUP:
+                setBotState(BotState.PATHING);
                 setPathState(PathState.INTAKE1);
                 break;
             case INTAKE1:
@@ -182,7 +214,7 @@ public class OrganizedAuto extends OpMode {
                 setPathState(PathState.INTAKE2);
                 break;
             case INTAKE2:
-                setBotState(BotState.PATHING);
+                setBotState(BotState.INTAKING);
                 setPathState(PathState.SHOOT3);
                 break;
             case SHOOT3:
@@ -204,6 +236,9 @@ public class OrganizedAuto extends OpMode {
             case SHOOT1:
                 followWait(Shot1);
                 break;
+            case INTAKE1SETUP:
+                followWait(Intake1Setup);
+                break;
             case INTAKE1:
                 followIntakeWait(Intake1);
                 break;
@@ -211,7 +246,7 @@ public class OrganizedAuto extends OpMode {
                 followWait(Shot2);
                 break;
             case INTAKE2:
-                followIntakeWait(Intake2);
+                followThenIntake(Intake2);
                 break;
             case SHOOT3:
                 followWait(Shot3);
@@ -233,9 +268,9 @@ public class OrganizedAuto extends OpMode {
                 case WAITING:
                     WaitingForPath();
                     break;
-//                case INTAKING:
-//                    Intaking();
-//                    break;
+                case INTAKING:
+                    Intaking();
+                    break;
             }
         }
 
@@ -249,6 +284,10 @@ public class OrganizedAuto extends OpMode {
     public void followIntakeWait(PathChain path){
         follower.followPath(path);
         intake();
+        setBotState(BotState.WAITING);
+    }
+    public void followThenIntake(PathChain path){
+        follower.followPath(path);
         setBotState(BotState.WAITING);
     }
 
@@ -295,6 +334,7 @@ public class OrganizedAuto extends OpMode {
 
         //timers
         shootTimer = new Timer();
+        intakeTimer = new Timer();
         opmodeTimer = new Timer();
         correctionTimer = new Timer();
 
