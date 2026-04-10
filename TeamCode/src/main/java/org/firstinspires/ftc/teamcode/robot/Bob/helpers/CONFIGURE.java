@@ -203,7 +203,6 @@ public class CONFIGURE extends OpMode {
             telemetryM.debug("Target RPM "+BobConfigure.Shooter.TARGET_RPM);
             telemetryM.debug("real power "+bob.shooterController.getPower());
         }
-
     }
 
     private void Hood(){

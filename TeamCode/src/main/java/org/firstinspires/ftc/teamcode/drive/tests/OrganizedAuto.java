@@ -36,8 +36,8 @@ public class OrganizedAuto extends OpMode {
 
    private boolean shoot = true;
 
-    private double timeForShooting3 = 1.3;
-    private double timeForIntakingGate = 2;
+    private double timeForShooting3 = 1.2;
+    private double timeForIntakingGate = 1;
 
     private final Pose startPose = new Pose(115.446, 125.988, Math.toRadians(45)); // Start Pose of our robot.
 
@@ -51,8 +51,14 @@ public class OrganizedAuto extends OpMode {
     public PathChain Intake1;
     public PathChain Intake1Setup;
     public PathChain Shot2;
+    public PathChain Intake2Setup;
     public PathChain Intake2;
     public PathChain Shot3;
+    public PathChain Intake3;
+
+    public PathChain Intake4Setup;
+    public PathChain Intake4;
+    public PathChain Shot4;
     public PathChain park;
     public PathChain ramPath;
     private void endAuto() {
@@ -70,89 +76,154 @@ public class OrganizedAuto extends OpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
                 .build();
 
-        Intake1 = follower.pathBuilder()
+        // TODO : REAL PATHS TANGENTIAL
+//        Intake1 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                new Pose(84.703, 92.028),
+//                                new Pose(83.554, 56.473),
+//                                new Pose(129.311, 57.719)
+//                        )
+//                )
+//                .setTangentHeadingInterpolation()
+////                .build();
+//        Shot2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(
+//                                new Pose(129.311, 57.719),
+//                                new Pose(90.231, 82.871)
+//                        )
+//                )
+//                .setTangentHeadingInterpolation()
+//                .setReversed()
+//                .build();
+
+
+
+
+
+        // TODO: TS IS FULL STRAFE
+
+        Intake1Setup = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Pose(84.703, 92.028),
-                                new Pose(83.554, 56.473),
-                                new Pose(129.311, 57.719)
+                        new BezierLine(
+                                new Pose(90.338, 83.054),
+                                new Pose(93, 56.392)
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .build();
+        Intake1 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(93, 56.392),
+                                new Pose(126.819, 56.378)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
         Shot2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(129.311, 57.719),
-                                new Pose(94.365, 83.561)
+                                new Pose(126.819, 56.378),
+                                new Pose(87.231, 82.871)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
 
-//        Shot1 = follower.pathBuilder().addPath(
-//                        new BezierLine(
-//                                new Pose(117.324, 128.910),
-//
-//
-//                                new Pose(84.703, 92.028)
-//                        )
-//                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
-//                .build();
-
-//
-//        Intake1Setup = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(
-//                                new Pose(90.338, 83.054),
-//                                new Pose(99.956, 56.392)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
-//                .build();
-//        Intake1 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(
-//                                new Pose(99.956, 56.392),
-//                                new Pose(126.819, 56.378)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-//                .build();
-//
-//        Shot2 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(
-//                                new Pose(126.819, 56.378),
-//                                new Pose(90.231, 82.871)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-//                .build();
-//
-
-
+        Intake2Setup = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(87.230, 82.871),
+                                new Pose(99.893, 61.449),
+                                new Pose(121.530, 58)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(25))
+                .build();
         Intake2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(90.231, 82.871),
-                                new Pose(128, 59.500)
+                                new Pose(121.530, 58),
+                                new Pose(129, 58)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(25), Math.toRadians(25))
                 .build();
+
+
+        // angle = 28.65
 
         Shot3 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                new Pose(132.032, 56.500),
+                        new BezierCurve(
+                                new Pose(129.000, 58),
+                                new Pose(95.428, 63.623),
                                 new Pose(90.231, 82.871)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(25), Math.toRadians(0))
+                .build();
+        Intake3 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(90.231, 82.454),
+                                new Pose(114, 81.914)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        new BezierLine(
+                                new Pose(114, 81.914),
+                                new Pose(90.301, 82.336)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+
+        Intake4Setup = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(90.301, 82.336),
+                                new Pose(99.893, 61.449),
+                                new Pose(121.530, 58)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(25))
+                .build();
+        Intake4 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(121.530, 58),
+                                new Pose(129, 58)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(25), Math.toRadians(25))
+                .build();
+//        Intake4 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                new Pose(90.301, 82.336),
+//                                new Pose(99.893, 61.449),
+//                                new Pose(128.000, 58)
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(28.65))
+//                .build();
+
+
+        Shot4 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(129, 57),
+                                new Pose(95.428, 63.623),
+                                new Pose(90.231, 82.871)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(28.65), Math.toRadians(0))
                 .build();
 
         park = follower.pathBuilder()
@@ -180,8 +251,14 @@ public class OrganizedAuto extends OpMode {
         INTAKE1SETUP,
         INTAKE1,
         SHOOT2,
+        INTAKE2SETUP,
         INTAKE2,
         SHOOT3,
+        INTAKE3,
+        INTAKE4SETUP,
+
+        INTAKE4,
+        SHOOT4,
         PARK
     }
     public enum Shooting{
@@ -231,18 +308,22 @@ public class OrganizedAuto extends OpMode {
         switch(pathState){
             case SHOOT1: // shoot 1 ends
                 setBotState(BotState.SHOOTING);
+                setPathState(PathState.INTAKE1SETUP);
+                break;
+            case INTAKE1SETUP:
+                setBotState(BotState.PATHING);
                 setPathState(PathState.INTAKE1);
                 break;
-//            case INTAKE1SETUP:
-//                setBotState(BotState.PATHING);
-//                setPathState(PathState.INTAKE1);
-//                break;
             case INTAKE1:
                 setBotState(BotState.PATHING);
                 setPathState(PathState.SHOOT2);
                 break;
             case SHOOT2:
                 setBotState(BotState.SHOOTING);
+                setPathState(PathState.INTAKE2SETUP);
+                break;
+            case INTAKE2SETUP:
+                setBotState(BotState.PATHING);
                 setPathState(PathState.INTAKE2);
                 break;
             case INTAKE2:
@@ -250,6 +331,22 @@ public class OrganizedAuto extends OpMode {
                 setPathState(PathState.SHOOT3);
                 break;
             case SHOOT3:
+                setBotState(BotState.SHOOTING);
+                setPathState(PathState.INTAKE3);
+                break;
+            case INTAKE3:
+                setBotState(BotState.SHOOTING);
+                setPathState(PathState.INTAKE4SETUP);
+                break;
+            case INTAKE4SETUP:
+                setBotState(BotState.PATHING);
+                setPathState(PathState.INTAKE4);
+                break;
+            case INTAKE4:
+                setBotState(BotState.INTAKING);
+                setPathState(PathState.SHOOT4);
+                break;
+            case SHOOT4:
                 setBotState(BotState.SHOOTING);
                 setPathState(PathState.PARK);
                 break;
@@ -268,24 +365,44 @@ public class OrganizedAuto extends OpMode {
             case SHOOT1:
                 followWait(Shot1);
                 break;
-//            case INTAKE1SETUP:
-//                shoot = false;
-//                followWait(Intake1Setup);
-//                break;
+            case INTAKE1SETUP:
+                shoot = false;
+                followSlowWait(Intake1Setup,1);
+                break;
             case INTAKE1:
-                followIntakeWait(Intake1);
+                followSlowIntakeWait(Intake1,0.7);
                 break;
             case SHOOT2:
                 shoot = true;
-                followWait(Shot2);
+                followIntakeWait(Shot2);
+                break;
+            case INTAKE2SETUP:
+                shoot = false;
+                followWait(Intake2Setup);
                 break;
             case INTAKE2:
                 shoot = false;
-                followThenIntake(Intake2);
+                followSlowIntakeWait(Intake2,0.7);
                 break;
             case SHOOT3:
                 shoot = true;
-                followWait(Shot3);
+                followIntakeWait(Shot3);
+                break;
+            case INTAKE3:
+                shoot = false;
+                followIntakeWait(Intake3);
+                break;
+            case INTAKE4SETUP:
+                shoot = false;
+                followWait(Intake4Setup);
+                break;
+            case INTAKE4:
+                shoot = false;
+                followSlowIntakeWait(Intake4,0.7);
+                break;
+            case SHOOT4:
+                shoot = true;
+                followIntakeWait(Shot4);
                 break;
             case PARK:
                 shoot = false;
@@ -323,6 +440,16 @@ public class OrganizedAuto extends OpMode {
         intake();
         setBotState(BotState.WAITING);
     }
+    public void followSlowWait(PathChain path, double speed){
+        stopIntake();
+        follower.followPath(path, speed, true);
+        setBotState(BotState.WAITING);
+    }
+    public void followSlowIntakeWait(PathChain path, double speed){
+        follower.followPath(path, speed, true);
+        intake();
+        setBotState(BotState.WAITING);
+    }
     public void followThenIntake(PathChain path){
         follower.followPath(path);
         setBotState(BotState.WAITING);
@@ -345,17 +472,16 @@ public class OrganizedAuto extends OpMode {
         telemetry.addLine("BotState: "+ botState);
         telemetry.addLine("PathState: "+ pathState);
         telemetry.addLine("ShootState: "+ botState);
-
         telemetry.update();
     }
     @Override
     public void loop() {
 
         if (shoot){
-       //     Hood();
-        //    Shooter();
+            Hood();
+            Shooter();
         }
-       // Turret();
+        Turret();
         StateUpdate();
         follower.update();
         bob.tick();
@@ -447,7 +573,7 @@ public class OrganizedAuto extends OpMode {
             }
     }
     private void Shooter(){
-            bob.shooterController.setRPMWithDistance(48);
+            bob.shooterController.setRPMWithDistance(47);
             bob.shooterController.configureConsts();
             bob.shooterController.update();
 
@@ -455,8 +581,9 @@ public class OrganizedAuto extends OpMode {
 
     private void Hood(){
 
-            bob.hoodController.setHoodPosWithDistance(48);
+            bob.hoodController.setHoodPosWithDistance(47);
 
     }
+
 
 }

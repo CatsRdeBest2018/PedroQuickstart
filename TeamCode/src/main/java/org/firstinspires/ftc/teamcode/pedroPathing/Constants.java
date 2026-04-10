@@ -29,11 +29,11 @@ public class Constants {
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.19,0,0.02,0.02))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.19,0,0.025,0))
 //            .headingPIDFCoefficients(new PIDFCoefficients(1.7,0,.075,.02))
            // .translationalPIDFCoefficients(new PIDFCoefficients(0.015,0,0.003,0.02))
             .headingPIDFCoefficients(new PIDFCoefficients(1,0,.01,0))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.02,0,0.0001,1,0))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.02,0,0.001,1,0))
             .centripetalScaling(0.0003)
             ;
 

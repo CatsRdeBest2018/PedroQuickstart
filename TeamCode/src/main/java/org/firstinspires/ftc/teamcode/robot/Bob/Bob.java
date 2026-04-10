@@ -37,7 +37,6 @@ public class Bob implements Robot {
     public IntakeController intakeController = new IntakeController();
     public ShooterController shooterController = new ShooterController();
     public TurretController turretController = new TurretController();
-
     public HoodController hoodController = new HoodController();
     public StopperController stopperController = new StopperController();
 
@@ -161,7 +160,7 @@ public class Bob implements Robot {
         tickMacros();
         intakeController.intakeTick();
         shooterController.update();
-        frontTwoWheels.runFrontTwoWheels();
+      //  frontTwoWheels.runFrontTwoWheels();
     }
 
 
