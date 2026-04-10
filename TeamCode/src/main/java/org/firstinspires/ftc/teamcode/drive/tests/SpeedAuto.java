@@ -41,7 +41,6 @@ public class SpeedAuto extends OpMode {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(117.324, 128.910),
-
                                 new Pose(84.703, 92.028)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))

@@ -28,7 +28,7 @@ public class SavingPosition1_0 extends OpMode {
     private Follower follower;
     private int pathState;
 
-    private final Pose startPose = new Pose(86.89230769230768, 9.353846153846153, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(115.446, 125.988, Math.toRadians(45)); // Start Pose of our robot.
 
 
 
