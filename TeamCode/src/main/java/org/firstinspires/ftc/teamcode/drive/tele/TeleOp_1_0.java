@@ -172,8 +172,14 @@ public class TeleOp_1_0 extends OpMode {
     }
 
     private void Intake(){
-        if (INTAKE_ON){
-            bob.intakeController.setIntake(INTAKE_POWER);
+        if (gamepad1.a){
+            bob.intakeController.setIntake(1);
+        }
+        else if (gamepad1.b){
+            bob.intakeController.setIntake(-1);
+        }
+        else{
+            bob.intakeController.setIntake(0);
         }
     }
 }
