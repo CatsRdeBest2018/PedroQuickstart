@@ -48,6 +48,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+
 @TeleOp(name = "Grab Last Position From Auto")
 public class GrabLastPosition extends OpMode {
 

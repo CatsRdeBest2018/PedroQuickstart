@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.tele;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -13,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.TARG
 import java.util.Deque;
 import java.util.LinkedList;
 
+@Disabled
 @TeleOp(name = "Shooter Tuning")
 public class ShooterTuning extends OpMode {
 
