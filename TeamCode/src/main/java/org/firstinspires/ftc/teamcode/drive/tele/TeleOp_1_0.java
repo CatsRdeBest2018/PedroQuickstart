@@ -28,7 +28,9 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALM
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_X;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_Y;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.STOPPER_STOP;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.TARGET_RPM;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOT_THREE;
 
 import android.annotation.SuppressLint;
 
@@ -37,6 +39,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -52,6 +55,8 @@ public class TeleOp_1_0 extends OpMode {
     Bob bob = new Bob();
     TelemetryManager telemetryM;
     private double odoDistance = 0;
+    private boolean isShooting = false;
+    private Timer shootTimer;
     private double currentRPM = 0;
     Limelight3A limelight;
     private Follower follower;
@@ -63,7 +68,8 @@ public class TeleOp_1_0 extends OpMode {
         startPose = new Pose(LAST_X,LAST_Y,LAST_HEADING);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
-        bob.init(hardwareMap);;
+        bob.init(hardwareMap);
+        shootTimer = new Timer();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.pipelineSwitch(0); // Switch to pipeline number 0
@@ -80,6 +86,7 @@ public class TeleOp_1_0 extends OpMode {
     @Override
 
     public void loop() {
+        bob.tickMacros();
 
         Position();
         Turret();
@@ -158,29 +165,35 @@ public class TeleOp_1_0 extends OpMode {
 
     private void Shooter(){
             currentRPM = bob.shooterController.getCurrentRPM();
-            bob.shooterController.setRPMWithDistance(limeDist);
+            bob.shooterController.setRPMWithDistance(limeDist-4);
             bob.shooterController.configureConsts();
             bob.shooterController.update();
     }
 
     private void Hood(){
-          bob.hoodController.setHoodPosWithDistance(limeDist,currentRPM);
+          bob.hoodController.setHoodPosWithDistance(limeDist-4,currentRPM);
     }
     private void Stopper(){
-        if (gamepad1.y) bob.stopperController.setStopperPos(STOPPER_POS);
-
-        else  bob.stopperController.setStopperPos(0.95);
+        //if (gamepad2.x) bob.stopperController.setStopperPos(STOPPER_STOP);
+        if (gamepad2.y) {
+            bob.runMacro(SHOOT_THREE);
+            shootTimer.resetTimer();
+        }
+        isShooting = !(shootTimer.getElapsedTimeSeconds() > 1.5);
     }
 
     private void Intake(){
-        if (gamepad1.a){
+        if (!isShooting) {
+            if (gamepad2.a) {
+                bob.intakeController.setIntake(1);
+            } else if (gamepad2.b) {
+                bob.intakeController.setIntake(-1);
+            } else {
+                bob.intakeController.setIntake(0);
+            }
+        }
+        if (isShooting){
             bob.intakeController.setIntake(1);
-        }
-        else if (gamepad1.b){
-            bob.intakeController.setIntake(-1);
-        }
-        else{
-            bob.intakeController.setIntake(0);
         }
     }
 }

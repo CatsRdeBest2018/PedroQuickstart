@@ -455,10 +455,10 @@ public class Bob implements Robot {
         if (MACROING) {
             BobState m = macroState;
 
-            if (m.shooterRPM != null) shooterController.setRPM(m.shooterRPM);
-
-            // Handle spindexer angle - absolute or increment
-
+            if (m.stopper != null){
+                if (m.stopper == STOPPER_STARTING_POS) stopperController.setStopperPos(STOPPER_STARTING_POS);
+                if (m.stopper == STOPPER_STOP) stopperController.setStopperPos(STOPPER_STOP);
+            }
 
             if (m.intakePower != null) {
                 if (m.intakePower == INTAKE_POWER_IN) {

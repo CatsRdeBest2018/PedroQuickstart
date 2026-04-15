@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing; // make sure this aligns with class location
 
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOTER_ZONE1;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SPINDEXER_RIGHT;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -42,7 +39,6 @@ public class TestAuto extends OpMode {
             case 0:
                 follower.followPath(Path1);
                 if (!follower.isBusy()) {
-                    bob.runMacro(SPINDEXER_RIGHT);
                     setPathState(-1);
                 }
                 break;
