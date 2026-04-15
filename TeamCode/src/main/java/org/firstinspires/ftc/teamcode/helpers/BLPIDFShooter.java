@@ -82,6 +82,7 @@ public class BLPIDFShooter {
                 + 0;
     }
 
+    // NEED P to be 4 if RPM is above 4000
 
     public double update(double currentTicks) {
         double dt = timer.seconds();

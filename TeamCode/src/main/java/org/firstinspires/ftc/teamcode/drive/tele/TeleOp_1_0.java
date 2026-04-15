@@ -164,11 +164,12 @@ public class TeleOp_1_0 extends OpMode {
     }
 
     private void Hood(){
-          bob.hoodController.setHoodPosWithDistance(limeDist);
+          bob.hoodController.setHoodPosWithDistance(limeDist,currentRPM);
     }
     private void Stopper(){
-        if (STOPPER_ON)bob.stopperController.setStopperPos(STOPPER_POS);
+        if (gamepad1.y) bob.stopperController.setStopperPos(STOPPER_POS);
 
+        else  bob.stopperController.setStopperPos(0.95);
     }
 
     private void Intake(){

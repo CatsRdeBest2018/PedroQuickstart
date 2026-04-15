@@ -75,7 +75,8 @@ public class Macros {
 
 
 
-//    //intake macro
+
+    //    //intake macro
 //    public static final BobState INTAKE_THEN_SPIN12 = new BobState(null, 60.0,null, null, INTAKE_POWER_OFF,null);
 //    public static final BobState INTAKE_THEN_SPIN11 = new BobState(null, 120.0,null, null, null,new LinkedState(Link.LinkType.WAIT,750, INTAKE_THEN_SPIN12));
 //    public static final BobState INTAKE_THEN_SPIN10 = new BobState(null, 120.0,null, null, null,new LinkedState(Link.LinkType.WAIT,750, INTAKE_THEN_SPIN11));

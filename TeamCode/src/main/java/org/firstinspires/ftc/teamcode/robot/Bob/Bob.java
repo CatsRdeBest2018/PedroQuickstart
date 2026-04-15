@@ -209,12 +209,25 @@ public class Bob implements Robot {
             shootPID.setTargetRPM(rpm);
         }
         public void setRPMWithDistance(double dist) {
+            double rpm;
             double x = dist/10;
-//            double rpm = 0.0471014 * x*x*x
-//                    - 0.588199   * x*x
-//                    + 2.42091  * x
-//                    + 0.0158385;
-            double rpm = 2.57606 * Math.pow(x,0.180193);
+            if (dist > 80){
+                BobConfigure.Shooter.P = 4;
+                configureConsts();
+            }
+            else{
+                BobConfigure.Shooter.P = 2;
+                configureConsts();
+            }
+            if (dist < 70){
+                rpm = 2.60605 * Math.pow(x,0.185002);
+            }
+            else if (dist < 100){
+                rpm = 0.125*x + 2.925;
+            }
+            else{
+                rpm = 0.2*x + 2.1;
+            }
             rpm = rpm*1000;
             shootPID.setTargetRPM(rpm);
         }
@@ -238,18 +251,33 @@ public class Bob implements Robot {
         public void setHoodPos(double pos){
             hood.setPosition(pos);
         }
-//        public void setHoodPosWithDistance(double distance){
-//            double pos = (-59.88069 + 30.36486 * Math.log(distance)) / 100.0;
-//            hood.setPosition(Range.clip(pos, 0.1, 0.7));
-//        }
-    public void setHoodPosWithDistance(double dist){
-        // 2d regression
-        double r = dist/10;
-        double pos = 0.95
-                + -0.344286 * r
-                +  0.0692857 * r*r
-                + -0.005 * r*r*r;
+    public void setHoodPosWithDistance(double dist, double rpm){
+        double pos;
+        if (dist >= 20 && dist <= 70){
+            double D_MIN = 20.0;  // inches
+            double D_MAX = 70.0;  // inches
+            double R_MIN = 2600; // RPM
+            double R_MAX = 3800; // RPM
+            double d = (dist - D_MIN) / (D_MAX - D_MIN);
+            double r = (rpm  - R_MIN) / (R_MAX - R_MIN);
 
+            pos = 0.50335
+                    - 0.45602 * r
+                    + 0.14898 * r * r
+                    + 0.10856 * r * r * r
+                    + 0.04380 * d
+                    - 0.37304 * d * r
+                    + 0.34399 * d * r * r
+                    + 0.53773 * d * d
+                    - 0.55141 * d * d * r
+                    - 0.01943 * d * d * d;
+        }
+        else if (dist < 20){
+            pos = 0.5;
+        }
+        else {
+            pos = 0.3;
+        }
         hood.setPosition(Range.clip(pos, 0.3, 0.5));
     }
     }
