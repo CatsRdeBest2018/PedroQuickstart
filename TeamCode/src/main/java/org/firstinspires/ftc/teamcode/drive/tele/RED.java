@@ -99,7 +99,7 @@ public class RED extends OpMode {
         Hood();
         Stopper();
         Intake();
-       // updateTargetAngle();
+         updateTargetAngle();
         PTO();
         FrontTwoWheels();
 
@@ -221,7 +221,7 @@ public class RED extends OpMode {
             bob.frontTwoWheels.runFrontTwoWheels();
             PTO_RUNNING = false;
             PTO_STOP = true;
-        } else if (PTOTimer.getElapsedTimeSeconds() > 2 && PTO_STOP){
+        } else if (PTOTimer.getElapsedTimeSeconds() > 3 && PTO_STOP){
             bob.frontTwoWheels.setFrontTwoWheelsPower(0);
             bob.frontTwoWheels.runFrontTwoWheels();
         }
@@ -250,7 +250,7 @@ public class RED extends OpMode {
         distanceToTarget = Math.sqrt(difX*difX + difY*difY);
         horiVeliToTarget = xVel * (-difY / distanceToTarget) + (yVel * (difX / distanceToTarget));
         targetAngle = Math.toDegrees(Math.atan((-horiVeliToTarget*timeInAir)/distanceToTarget));
-        bob.turretController.setTargetAngle(targetAngle);
+    //    bob.turretController.setTargetAngle(targetAngle);
 
         // for adjustable hood:
         veliTowardTarget = xVel * (difX / distanceToTarget) + yVel * (difY / distanceToTarget);
@@ -261,6 +261,7 @@ public class RED extends OpMode {
 
         telemetryM.debug("sideways velocity to target: " + horiVeliToTarget);
         telemetryM.debug("target angle: " + targetAngle);
+
 
     }
 
