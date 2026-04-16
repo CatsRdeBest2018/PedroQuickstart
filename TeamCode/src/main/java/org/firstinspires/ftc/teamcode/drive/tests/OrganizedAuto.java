@@ -36,7 +36,7 @@ public class OrganizedAuto extends OpMode {
     private double currentRPM = 0;
    private boolean shoot = true;
 
-    private double setupTime = 0.5;
+    private double setupTime = 0.4;
     private double timeForShooting3 = 1.2;
     private double timeForIntakingGate = 2;
 
@@ -130,7 +130,7 @@ public class OrganizedAuto extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(126.089, 55.86),
-                                new Pose(129.3, 58.2)
+                                new Pose(130, 58.6)
                         )
                 )
                 .setLinearHeadingInterpolation(0.66, 0.66)
@@ -142,7 +142,7 @@ public class OrganizedAuto extends OpMode {
         Shot3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(128.62, 57.68),
+                                new Pose(129.5, 59),
                                 new Pose(95.428, 63.623),
                                 new Pose(90.231, 82.871)
                         )
@@ -189,7 +189,7 @@ public class OrganizedAuto extends OpMode {
         Shot4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(129, 57),
+                                new Pose(129.5, 59),
                                 new Pose(95.428, 63.623),
                                 new Pose(90.231, 82.871)
                         )
@@ -355,7 +355,8 @@ public class OrganizedAuto extends OpMode {
                 followSlowWait(Intake1Setup,1);
                 break;
             case INTAKE1:
-                followSlowIntakeWait(Intake1,0.7);
+                followSlowIntakeWait(Intake1,1);
+                //0.7
                 break;
             case SHOOT2:
                 shoot = true;
@@ -367,7 +368,7 @@ public class OrganizedAuto extends OpMode {
                 break;
             case INTAKE2SETUP2:
                 shoot = false;
-                followSlowWait(Intake2Setup2,0.7);
+                followSlowWait(Intake2Setup2,1);
                 break;
             case INTAKE2:
                 shoot = false;
@@ -571,7 +572,7 @@ public class OrganizedAuto extends OpMode {
 
     private void Hood(){
 
-            bob.hoodController.setHoodPosWithDistance(48,currentRPM);
+            bob.hoodController.setHoodPosWithDistance(48,3483);
 
     }
 

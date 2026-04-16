@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.Bob.helpers;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.ANGULAR_VEL_TUN;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.F_TUNE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.AngularTuning.TARGET_ANG_VEL_1;
@@ -12,9 +11,6 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Inta
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.FrontTwoWheelsPower;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.PTO_In_Left;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.PTO_In_Right;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.PTO.PTO_Position;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.DISTANCE_TO_TARGET;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.DRIVE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.LL_LOCALIZATION;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Position.SHOW_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shooter.SHOOTER_ON;
@@ -24,12 +20,11 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stop
 
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_MOVING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.DISTANCE_FROM_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_X;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_Y;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.TARGET_RPM;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_ENGAGED;
 
 import android.annotation.SuppressLint;
 
@@ -42,7 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 
@@ -240,19 +235,19 @@ public class CONFIGURE extends OpMode {
     }
 
     public void FrontTwoWheels() {
-//        if (false) {
-//            bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
-//            bob.frontTwoWheels.runFrontTwoWheels();
-//        } else {
-//            bob.frontTwoWheels.setFrontTwoWheelsPower(0);
-//            bob.frontTwoWheels.runFrontTwoWheels();
-//        }
+        if (PTO_ENGAGED) {
+            bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
+            bob.frontTwoWheels.runFrontTwoWheels();
+        } else {
+            bob.frontTwoWheels.setFrontTwoWheelsPower(0);
+            bob.frontTwoWheels.runFrontTwoWheels();
+        }
     }
 
     public void PTO() {
-//        if (false) {
-//            bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
-//        }
+        if (false) {
+            bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
+        }
     }
     private void updateTargetAngle(){
         xPos = follower.getPose().getX();

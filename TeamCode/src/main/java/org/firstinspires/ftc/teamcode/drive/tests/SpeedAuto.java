@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.tests;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_X;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST_Y;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.INTAKE_THEN_SPIN;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOTER_ZONE1;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOTER_ZONE1_AUTO;
-import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOT_ALL_THREE_AUTO;
+
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;

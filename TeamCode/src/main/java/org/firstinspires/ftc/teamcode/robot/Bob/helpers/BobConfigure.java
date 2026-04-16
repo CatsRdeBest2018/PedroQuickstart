@@ -76,7 +76,7 @@ public class BobConfigure {
 
     @Configurable
     public static class PTO {
-        public static double FrontTwoWheelsPower = 0;
+        public static double FrontTwoWheelsPower = 1;
         public static double PTO_Position;
         public static double PTO_In_Left = BobConstants.SERVO_ENGAGED_LEFT;
         public static double PTO_In_Right = BobConstants.SERVO_ENGAGED_RIGHT;

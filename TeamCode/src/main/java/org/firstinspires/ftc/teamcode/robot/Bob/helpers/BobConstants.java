@@ -67,6 +67,11 @@ public class BobConstants {
     public static double INTAKE_POWER_OFF = 0;
     public static double BALL_PROX = 20;
 
+    // ==================== PTO ====================
+
+    public static boolean PTO_ENGAGED = false;
+    public static boolean PTO_MESSAGE = false;
+    public static boolean PTO_RUNNING = false;
 
     // ==================== MISC ====================
     public static int INFINITY = 2000000000;
