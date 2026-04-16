@@ -41,7 +41,7 @@ public class MovingTurretTele extends OpMode {
     private double yPos = 0;
     private double xVel = 0;
     private double yVel = 0;
-    private final double timeInAir = 0.8;
+    private final double timeInAir = 0.65;
     private final double cameraHeight = 11.25; // inches
     private final double tagHeight = 29.5;  // inches
     private final double heightDif = tagHeight-cameraHeight;
@@ -112,7 +112,6 @@ public class MovingTurretTele extends OpMode {
 
 //        telemetry.addData("ppYaw", ppYaw);
         limelight.updateRobotOrientation(ppYaw+90);
-
         if (gamepad1.left_bumper){
             follower.setPose(new Pose(128.13769363166955,71.62822719449225,follower.getHeading()));
         }

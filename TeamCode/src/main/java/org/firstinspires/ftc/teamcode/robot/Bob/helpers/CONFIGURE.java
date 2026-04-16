@@ -22,6 +22,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Shoo
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Stopper.STOPPER_POS;
 
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_MOVING;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Turret.TURRET_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.DISTANCE_FROM_TARGET;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.KALMAN_TURRET;
@@ -51,12 +52,26 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 public class CONFIGURE extends OpMode {
     Bob bob = new Bob();
     TelemetryManager telemetryM;
+    private final double timeInAir = 0.65;
+    private double horiVeliToTarget = 0;
+    private double veliTowardTarget = 0;
+    private double targetAngle = 0;
+    private double distanceToTarget = 0;
+    private double targetX = 134.64543889845095;
+    private double targetY = 139.24612736660927;
     private double odoDistance = 0;
+    private double difX = 0;
+
+    private double difY = 0;
     private double currentRPM = 0;
     Limelight3A limelight;
     private Follower follower;
     private Pose startPose;
     private double limeDist = 1;
+    private double xPos = 0;
+    private double yPos = 0;
+    private double xVel = 0;
+    private double yVel = 0;
     @Override
     public void init() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -169,7 +184,9 @@ public class CONFIGURE extends OpMode {
                 telemetryM.addData("Limelight", "No Targets");
                 bob.turretController.update(0,0);
             }
-
+        }
+        if (TURRET_MOVING){
+            updateTargetAngle();
         }
     }
     private void AngularTuning(){
@@ -236,5 +253,28 @@ public class CONFIGURE extends OpMode {
 //        if (false) {
 //            bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
 //        }
+    }
+    private void updateTargetAngle(){
+        xPos = follower.getPose().getX();
+        yPos = follower.getPose().getY();
+        xVel = follower.getVelocity().getXComponent();
+        yVel = follower.getVelocity().getYComponent();
+        difX = targetX - xPos;
+        difY = targetY - yPos;
+        distanceToTarget = Math.sqrt(difX*difX + difY*difY);
+        horiVeliToTarget = xVel * (-difY / distanceToTarget) + (yVel * (difX / distanceToTarget));
+        targetAngle = Math.toDegrees(Math.atan((-horiVeliToTarget*timeInAir)/distanceToTarget));
+        bob.turretController.setTargetAngle(targetAngle);
+
+        // for adjustable hood:
+        veliTowardTarget = xVel * (difX / distanceToTarget) + yVel * (difY / distanceToTarget);
+        telemetry.addLine("xVel: " + xVel);
+        telemetry.addLine("yVel: " + yVel);
+        telemetry.addLine("sideways velocity to target: " + horiVeliToTarget);
+        telemetry.addLine("target angle: " + targetAngle);
+
+        telemetryM.debug("sideways velocity to target: " + horiVeliToTarget);
+        telemetryM.debug("target angle: " + targetAngle);
+
     }
 }

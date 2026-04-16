@@ -48,6 +48,7 @@ public class BobConfigure {
     @Configurable
     public static class Turret{
         public static boolean TURRET_ON = false;
+        public static boolean TURRET_MOVING = false;
         public static double P = tP;
         public static double I = tI;
         public static double D = tD;
