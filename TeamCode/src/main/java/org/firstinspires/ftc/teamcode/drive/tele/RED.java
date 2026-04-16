@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_ENGAGED;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_MESSAGE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_RUNNING;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.STOPPER_STOP;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOT_THREE;
 
 import android.annotation.SuppressLint;
@@ -44,6 +45,7 @@ public class RED extends OpMode {
     private double limeDist = 1;
     @Override
     public void init() {
+        bob.stopper.setPosition(STOPPER_STOP);
         PTO_MESSAGE = false;
         PTO_ENGAGED = false;
         PTO_RUNNING = false;
@@ -78,10 +80,12 @@ public class RED extends OpMode {
         Hood();
         Stopper();
         Intake();
+        PTO();
+        FrontTwoWheels();
 
 
         if (!gamepad1.right_bumper) follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
-        else follower.setTeleOpDrive(-gamepad1.left_stick_y*0.7, -gamepad1.left_stick_x*0.7, -gamepad1.right_stick_x*0.3, true);
+        else follower.setTeleOpDrive(-gamepad1.left_stick_y*0.5, -gamepad1.left_stick_x*0.5, -gamepad1.right_stick_x*0.5, true);
         follower.update();
         telemetryM.update();
     }
@@ -188,13 +192,14 @@ public class RED extends OpMode {
             PTOTimer.resetTimer();
             bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
             bob.frontTwoWheels.runFrontTwoWheels();
-        } else {
+            PTO_RUNNING = false;
+        } else if (PTOTimer.getElapsedTimeSeconds() > 3){
             bob.frontTwoWheels.setFrontTwoWheelsPower(0);
             bob.frontTwoWheels.runFrontTwoWheels();
         }
     }
     public void PTO() {
-        if (PTO_ENGAGED) {
+        if (gamepad2.right_bumper && gamepad2.left_bumper) {
             PTOTimer.resetTimer();
             bob.ptoServos.setPTOPosition(PTO_In_Left, PTO_In_Right);
             PTO_MESSAGE = true;
