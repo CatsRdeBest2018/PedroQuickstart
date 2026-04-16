@@ -72,6 +72,7 @@ public class BobConstants {
     public static boolean PTO_ENGAGED = false;
     public static boolean PTO_MESSAGE = false;
     public static boolean PTO_RUNNING = false;
+    public static boolean PTO_STOP = false;
 
     // ==================== MISC ====================
     public static int INFINITY = 2000000000;

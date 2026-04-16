@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.LAST
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_ENGAGED;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_MESSAGE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_RUNNING;
+import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.PTO_STOP;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConstants.STOPPER_STOP;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.Macros.SHOOT_THREE;
 
@@ -35,9 +36,24 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 public class RED extends OpMode {
     Bob bob = new Bob();
     TelemetryManager telemetryM;
+    private double xPos = 0;
+    private double yPos = 0;
+    private double xVel = 0;
+    private double yVel = 0;
+    private final double timeInAir = 0.6;
+    private double horiVeliToTarget = 0;
+    private double veliTowardTarget = 0;
+    private double targetAngle = 0;
+    private double distanceToTarget = 0;
+    private double targetX = 134.64543889845095;
+    private double targetY = 139.24612736660927;
     private double odoDistance = 0;
+    private double difX = 0;
+
+    private double difY = 0;
     private boolean isShooting = false;
-    private Timer shootTimer, PTOTimer;
+    private double shootingSpeed = 1.0;
+    private Timer shootTimer, PTOTimer, begin;
     private double currentRPM = 0;
     Limelight3A limelight;
     private Follower follower;
@@ -45,17 +61,20 @@ public class RED extends OpMode {
     private double limeDist = 1;
     @Override
     public void init() {
+        bob.init(hardwareMap);
         bob.stopper.setPosition(STOPPER_STOP);
         PTO_MESSAGE = false;
         PTO_ENGAGED = false;
         PTO_RUNNING = false;
+        PTO_STOP = false;
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         startPose = new Pose(LAST_X,LAST_Y,LAST_HEADING);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
-        bob.init(hardwareMap);
         shootTimer = new Timer();
         PTOTimer = new Timer();
+        begin = new Timer();
+        begin.resetTimer();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.pipelineSwitch(0); // Switch to pipeline number 0
@@ -80,8 +99,9 @@ public class RED extends OpMode {
         Hood();
         Stopper();
         Intake();
-        PTO();
-        FrontTwoWheels();
+       // updateTargetAngle();
+    //    PTO();
+   //     FrontTwoWheels();
 
 
         if (!gamepad1.right_bumper) follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
@@ -163,7 +183,14 @@ public class RED extends OpMode {
     }
     private void Stopper(){
         //if (gamepad2.x) bob.stopperController.setStopperPos(STOPPER_STOP);
+        if (gamepad2.x) {
+            shootingSpeed = 0.6;
+            bob.runMacro(SHOOT_THREE);
+            shootTimer.resetTimer();
+        }
+
         if (gamepad2.y) {
+            shootingSpeed = 1.0;
             bob.runMacro(SHOOT_THREE);
             shootTimer.resetTimer();
         }
@@ -180,8 +207,8 @@ public class RED extends OpMode {
                 bob.intakeController.setIntake(0);
             }
         }
-        if (isShooting){
-            bob.intakeController.setIntake(1);
+        if (isShooting && begin.getElapsedTimeSeconds() > 1.6){
+            bob.intakeController.setIntake(shootingSpeed);
         }
     }
 
@@ -193,7 +220,8 @@ public class RED extends OpMode {
             bob.frontTwoWheels.setFrontTwoWheelsPower(FrontTwoWheelsPower);
             bob.frontTwoWheels.runFrontTwoWheels();
             PTO_RUNNING = false;
-        } else if (PTOTimer.getElapsedTimeSeconds() > 3){
+            PTO_STOP = true;
+        } else if (PTOTimer.getElapsedTimeSeconds() > 3 && PTO_STOP){
             bob.frontTwoWheels.setFrontTwoWheelsPower(0);
             bob.frontTwoWheels.runFrontTwoWheels();
         }
@@ -212,4 +240,28 @@ public class RED extends OpMode {
             }
         }
     }
+    private void updateTargetAngle(){
+        xPos = follower.getPose().getX();
+        yPos = follower.getPose().getY();
+        xVel = follower.getVelocity().getXComponent();
+        yVel = follower.getVelocity().getYComponent();
+        difX = targetX - xPos;
+        difY = targetY - yPos;
+        distanceToTarget = Math.sqrt(difX*difX + difY*difY);
+        horiVeliToTarget = xVel * (-difY / distanceToTarget) + (yVel * (difX / distanceToTarget));
+        targetAngle = Math.toDegrees(Math.atan((-horiVeliToTarget*timeInAir)/distanceToTarget));
+        bob.turretController.setTargetAngle(targetAngle);
+
+        // for adjustable hood:
+        veliTowardTarget = xVel * (difX / distanceToTarget) + yVel * (difY / distanceToTarget);
+        telemetry.addLine("xVel: " + xVel);
+        telemetry.addLine("yVel: " + yVel);
+        telemetry.addLine("sideways velocity to target: " + horiVeliToTarget);
+        telemetry.addLine("target angle: " + targetAngle);
+
+        telemetryM.debug("sideways velocity to target: " + horiVeliToTarget);
+        telemetryM.debug("target angle: " + targetAngle);
+
+    }
+
 }

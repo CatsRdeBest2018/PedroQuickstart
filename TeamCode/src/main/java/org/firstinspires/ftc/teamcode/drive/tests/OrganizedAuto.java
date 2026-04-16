@@ -36,7 +36,7 @@ public class OrganizedAuto extends OpMode {
     private double currentRPM = 0;
    private boolean shoot = true;
 
-    private double setupTime = 0.4;
+    private double setupTime = 0.1;
     private double timeForShooting3 = 1.2;
     private double timeForIntakingGate = 2;
 
