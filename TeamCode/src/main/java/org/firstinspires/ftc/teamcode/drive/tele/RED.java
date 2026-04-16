@@ -100,8 +100,8 @@ public class RED extends OpMode {
         Stopper();
         Intake();
        // updateTargetAngle();
-    //    PTO();
-   //     FrontTwoWheels();
+        PTO();
+        FrontTwoWheels();
 
 
         if (!gamepad1.right_bumper) follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
@@ -221,7 +221,7 @@ public class RED extends OpMode {
             bob.frontTwoWheels.runFrontTwoWheels();
             PTO_RUNNING = false;
             PTO_STOP = true;
-        } else if (PTOTimer.getElapsedTimeSeconds() > 3 && PTO_STOP){
+        } else if (PTOTimer.getElapsedTimeSeconds() > 2 && PTO_STOP){
             bob.frontTwoWheels.setFrontTwoWheelsPower(0);
             bob.frontTwoWheels.runFrontTwoWheels();
         }
