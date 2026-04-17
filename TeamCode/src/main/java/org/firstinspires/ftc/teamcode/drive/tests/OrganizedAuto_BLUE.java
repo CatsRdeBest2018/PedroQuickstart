@@ -41,7 +41,10 @@ public class OrganizedAuto_BLUE extends OpMode {
     private double timeForShooting3 = 1.2;
     private double timeForIntakingGate = 2;
 
-    private final Pose startPose = mirrorRedToBlue(new Pose(115.446, 125.988, Math.toRadians(45))); //start pose
+    private final Pose startPose = mirrorRedToBlue(new Pose(115.446-2.5, 125.988, Math.toRadians(45))); //start pose
+  //private final Pose startPose = new Pose(25.778, 125.988, Math.toRadians(45)); //start pose
+    // 25.77, 129.766 heading: 2.387
+
     private BotState botState = BotState.INIT;
     private PathState pathState = PathState.INIT;
     private Shooting shooting = Shooting.START_SHOOTING;
@@ -115,22 +118,43 @@ public class OrganizedAuto_BLUE extends OpMode {
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
-
+//
+//        Intake2Setup2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                mirrorRedToBlue(new Pose(87.230, 82.871)),
+//                                mirrorRedToBlue(new Pose(99.893, 61.449)),
+//                                mirrorRedToBlue(new Pose(123, 61.9))
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-10))
+//                .build();
+//        Intake2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(
+//                                mirrorRedToBlue(new Pose(126.089, 55.86)),
+//                                mirrorRedToBlue(new Pose(126.3, 56))
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(-0.66, -0.66)
+//                .build();
         Intake2Setup = follower.pathBuilder()
                 .addPath(new BezierCurve(
                         mirrorRedToBlue(new Pose(87.230, 82.871)),
                         mirrorRedToBlue(new Pose(99.893, 61.449)),
                         mirrorRedToBlue(new Pose(126.089, 55.86))
                 ))
-                .setLinearHeadingInterpolation(Math.toRadians(0), -0.66)
+                .setLinearHeadingInterpolation(Math.toRadians(0), -.66)
                 .build();
 
         Intake2Setup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(
-                        mirrorRedToBlue(new Pose(87.230, 82.871)),
-                        mirrorRedToBlue(new Pose(99.893, 61.449)),
-                        mirrorRedToBlue(new Pose(123, 61.9))
-                ))
+                .addPath(
+                        new BezierCurve(
+                                mirrorRedToBlue(new Pose(87.230, 82.871)),
+                                mirrorRedToBlue( new Pose(99.893, 61.449)),
+                                mirrorRedToBlue(new Pose(123, 61.9))
+                        )
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-10))
                 .build();
 
@@ -474,7 +498,7 @@ public class OrganizedAuto_BLUE extends OpMode {
         bob.init(hardwareMap);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(1);
 
         //timers
         shootTimer = new Timer();

@@ -329,6 +329,9 @@ public class Bob implements Robot {
             double power = turretPIDF.update(currentAngle, angVel);
             turret.setPower(-power);
         }
+        public void manual(double power){
+            turret.setPower(0.3*power);
+        }
         public void setTargetAngle(double angle) {
             turretPIDF.setTargetAngle(angle);
         }

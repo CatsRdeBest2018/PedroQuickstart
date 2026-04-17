@@ -130,7 +130,7 @@ public class OrganizedAuto extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(126.089, 55.86),
-                                new Pose(130, 58.6)
+                                new Pose(126.3, 56)
                         )
                 )
                 .setLinearHeadingInterpolation(0.66, 0.66)
@@ -142,7 +142,7 @@ public class OrganizedAuto extends OpMode {
         Shot3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(129.5, 59),
+                                new Pose(126.3, 56),
                                 new Pose(95.428, 63.623),
                                 new Pose(90.231, 82.871)
                         )
