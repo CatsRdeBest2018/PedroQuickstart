@@ -53,7 +53,7 @@ public class RED extends OpMode {
     private double difY = 0;
     private boolean isShooting = false;
     private double shootingSpeed = 1.0;
-    private Timer shootTimer, PTOTimer, begin;
+    private Timer shootTimer, PTOTimer, begin, limelightTimer;
     private double currentRPM = 0;
     Limelight3A limelight;
     private Follower follower;
@@ -74,6 +74,7 @@ public class RED extends OpMode {
         shootTimer = new Timer();
         PTOTimer = new Timer();
         begin = new Timer();
+        limelightTimer = new Timer();
         begin.resetTimer();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
@@ -95,11 +96,11 @@ public class RED extends OpMode {
 
         Position();
         Turret();
+        updateTargetAngle();
         Shooter();
         Hood();
         Stopper();
         Intake();
-         updateTargetAngle();
         PTO();
         FrontTwoWheels();
 
@@ -157,6 +158,7 @@ public class RED extends OpMode {
         telemetryM.debug("limelight distance: "+ limeDist);
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
+            limelightTimer.resetTimer();
             limeDist = 39.37*result.getBotposeAvgDist();
             if ((turretAngle > 90.0 && result.getTx() > 0)
                     ||
@@ -173,7 +175,11 @@ public class RED extends OpMode {
 
     private void Shooter(){
         currentRPM = bob.shooterController.getCurrentRPM();
-        bob.shooterController.setRPMWithDistance(limeDist-4);
+        if (limelightTimer.getElapsedTimeSeconds() < 3) {
+            bob.shooterController.setRPMWithDistance(limeDist - 4);
+        } else {
+            bob.shooterController.setRPMWithDistance(distanceToTarget);
+        }
         bob.shooterController.configureConsts();
         bob.shooterController.update();
     }
