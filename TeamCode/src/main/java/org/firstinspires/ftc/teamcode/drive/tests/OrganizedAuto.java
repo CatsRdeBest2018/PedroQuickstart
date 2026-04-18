@@ -130,7 +130,7 @@ public class OrganizedAuto extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(126.089, 55.86),
-                                new Pose(126.3, 56)
+                                new Pose(127, 57.3)
                         )
                 )
                 .setLinearHeadingInterpolation(0.66, 0.66)
@@ -179,11 +179,11 @@ public class OrganizedAuto extends OpMode {
         Intake4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(121.530, 58),
-                                new Pose(127.88, 57.45)
+                                new Pose(126.089, 55.86),
+                                new Pose(127.5, 57.3)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(32.09))
+                .setLinearHeadingInterpolation(0.66, 0.66)
                 .build();
 
         Shot4 = follower.pathBuilder()
@@ -388,7 +388,7 @@ public class OrganizedAuto extends OpMode {
                 break;
             case INTAKE4:
                 shoot = false;
-                followSlowIntakeWait(Intake2,1);
+                followSlowIntakeWait(Intake4,1);
                 break;
             case SHOOT4:
                 shoot = true;

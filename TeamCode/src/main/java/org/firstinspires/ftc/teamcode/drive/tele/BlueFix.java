@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.robot.Bob.Bob;
 
 
 @TeleOp
-public class BLUE_MANUAL extends OpMode {
+public class BlueFix extends OpMode {
     Bob bob = new Bob();
     TelemetryManager telemetryM;
     private double xPos = 0;
@@ -79,6 +79,7 @@ public class BLUE_MANUAL extends OpMode {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.pipelineSwitch(1); // Switch to pipeline number 0
+
     }
     @Override
     public void start() {
@@ -92,9 +93,10 @@ public class BLUE_MANUAL extends OpMode {
 
     public void loop() {
         bob.tickMacros();
-        updateTargetAngle();
-        //Position();
+
+        // Position();
         Turret();
+        updateTargetAngle();
         Shooter();
         Hood();
         Stopper();
@@ -166,31 +168,32 @@ public class BLUE_MANUAL extends OpMode {
             // else bob.turretController.update(result.getTx(), 0);
         } else {
             telemetryM.addData("Limelight", "No Targets");
-            //bob.turretController.update(0,0);
+            // bob.turretController.update(0,0);
             bob.turretController.manual(gamepad2.left_stick_x);
         }
-
     }
 
 
     private void Shooter(){
         currentRPM = bob.shooterController.getCurrentRPM();
-        if (limelightTimer.getElapsedTimeSeconds() < 3) {
-            bob.shooterController.setRPMWithDistance(limeDist - 4);
-        } else {
-            bob.shooterController.setRPMWithDistance(distanceToTarget-9);
-        }
+//        if (limelightTimer.getElapsedTimeSeconds() < 3) {
+//            bob.shooterController.setRPMWithDistance(limeDist - 4);
+//        } else {
+//            bob.shooterController.setRPMWithDistance(distanceToTarget-9);
+//        }
+        bob.shooterController.setRPMWithDistance(limeDist - 4);
         bob.shooterController.configureConsts();
         bob.shooterController.update();
     }
 
     private void Hood(){
-        if (limelightTimer.getElapsedTimeSeconds() < 3) {
-            bob.hoodController.setHoodPosWithDistance(limeDist-4,currentRPM);
-        }
-        else {
-            bob.hoodController.setHoodPosWithDistance(distanceToTarget-9,currentRPM);
-        }
+//        if (limelightTimer.getElapsedTimeSeconds() < 3) {
+//            bob.hoodController.setHoodPosWithDistance(limeDist-4,currentRPM);
+//        }
+//        else {
+//            bob.hoodController.setHoodPosWithDistance(distanceToTarget-9,currentRPM);
+//        }
+        bob.hoodController.setHoodPosWithDistance(limeDist-4,currentRPM);
     }
     private void Stopper(){
         //if (gamepad2.x) bob.stopperController.setStopperPos(STOPPER_STOP);

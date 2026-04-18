@@ -94,7 +94,7 @@ public class RED extends OpMode {
     public void loop() {
         bob.tickMacros();
 
-        Position();
+       // Position();
         Turret();
         updateTargetAngle();
         Shooter();
@@ -168,7 +168,8 @@ public class RED extends OpMode {
             // else bob.turretController.update(result.getTx(), 0);
         } else {
             telemetryM.addData("Limelight", "No Targets");
-            bob.turretController.update(0,0);
+           // bob.turretController.update(0,0);
+            bob.turretController.manual(gamepad2.left_stick_x);
         }
     }
 
@@ -178,14 +179,19 @@ public class RED extends OpMode {
         if (limelightTimer.getElapsedTimeSeconds() < 3) {
             bob.shooterController.setRPMWithDistance(limeDist - 4);
         } else {
-            bob.shooterController.setRPMWithDistance(distanceToTarget);
+            bob.shooterController.setRPMWithDistance(distanceToTarget-9);
         }
         bob.shooterController.configureConsts();
         bob.shooterController.update();
     }
 
     private void Hood(){
-        bob.hoodController.setHoodPosWithDistance(limeDist-4,currentRPM);
+        if (limelightTimer.getElapsedTimeSeconds() < 3) {
+            bob.hoodController.setHoodPosWithDistance(limeDist-4,currentRPM);
+        }
+        else {
+            bob.hoodController.setHoodPosWithDistance(distanceToTarget-9,currentRPM);
+        }
     }
     private void Stopper(){
         //if (gamepad2.x) bob.stopperController.setStopperPos(STOPPER_STOP);

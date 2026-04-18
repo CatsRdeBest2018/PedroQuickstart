@@ -41,7 +41,7 @@ public class OrganizedAuto_BLUE extends OpMode {
     private double timeForShooting3 = 1.2;
     private double timeForIntakingGate = 2;
 
-    private final Pose startPose = mirrorRedToBlue(new Pose(115.446-2.5, 125.988, Math.toRadians(45))); //start pose
+    private final Pose startPose = mirrorRedToBlue(new Pose(115.446-1.8, 125.988, Math.toRadians(45))); //start pose
   //private final Pose startPose = new Pose(25.778, 125.988, Math.toRadians(45)); //start pose
     // 25.77, 129.766 heading: 2.387
 
@@ -157,18 +157,20 @@ public class OrganizedAuto_BLUE extends OpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-10))
                 .build();
-
         Intake2 = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        mirrorRedToBlue(new Pose(126.089, 55.86)),
-                        mirrorRedToBlue(new Pose(129.3, 58.2))
-                ))
+                .addPath(
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(126.089, 55.86)),
+                                mirrorRedToBlue(new Pose(127, 57.3))
+                        )
+                )
                 .setLinearHeadingInterpolation(-0.66, -0.66)
                 .build();
 
+
         Shot3 = follower.pathBuilder()
                 .addPath(new BezierCurve(
-                        mirrorRedToBlue(new Pose(128.62, 57.68)),
+                        mirrorRedToBlue(new Pose(127, 57.3)),
                         mirrorRedToBlue(new Pose(95.428, 63.623)),
                         mirrorRedToBlue(new Pose(90.231, 82.871))
                 ))
@@ -196,18 +198,21 @@ public class OrganizedAuto_BLUE extends OpMode {
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
-
         Intake4 = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        mirrorRedToBlue(new Pose(121.530, 58)),
-                        mirrorRedToBlue(new Pose(127.88, 57.45))
-                ))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-32.09))
+                .addPath(
+                        new BezierLine(
+                                mirrorRedToBlue(new Pose(123, 61.9)),
+                                mirrorRedToBlue(new Pose(128, 57.3))
+                        )
+                )
+                .setLinearHeadingInterpolation(-0.66, -0.66)
                 .build();
+
+
 
         Shot4 = follower.pathBuilder()
                 .addPath(new BezierCurve(
-                        mirrorRedToBlue(new Pose(129, 57)),
+                        mirrorRedToBlue(new Pose(128, 57.3)),
                         mirrorRedToBlue(new Pose(95.428, 63.623)),
                         mirrorRedToBlue(new Pose(90.231, 82.871))
                 ))
