@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.drive.tests;
+import static org.firstinspires.ftc.teamcode.drive.tests.OrganizedAuto.PathState.SHOOT3;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.AutoPaths.FIELD_SIZE;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_ON;
 import static org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure.Hood.HOOD_POS;
@@ -31,7 +32,7 @@ import org.firstinspires.ftc.teamcode.robot.Bob.helpers.BobConfigure;
 @Autonomous
 public class OrganizedAuto_BLUE extends OpMode {
     private final Bob bob = new Bob();
-    private Timer shootTimer, correctionTimer, opmodeTimer, intakeTimer;
+    private Timer shootTimer, correctionTimer, opmodeTimer, intakeTimer, gateTimer;
     Limelight3A limelight;
     private Follower follower;
     private double currentRPM = 0;
@@ -360,7 +361,12 @@ public class OrganizedAuto_BLUE extends OpMode {
         }
     }
     public void WaitingForPath(){
-        if (!follower.isBusy()){
+        if (pathState == PathState.SHOOT3 || pathState == PathState.SHOOT4){
+            if (!follower.isBusy() || gateTimer.getElapsedTimeSeconds() > 2.5){
+                PathEnd();
+            }
+        }
+        else if (!follower.isBusy()){
             PathEnd();
         }
     }
@@ -390,6 +396,7 @@ public class OrganizedAuto_BLUE extends OpMode {
                 break;
             case INTAKE2:
                 shoot = false;
+                gateTimer.resetTimer();
                 followIntakeWait(Intake2);
                 break;
             case SHOOT3:
@@ -406,7 +413,8 @@ public class OrganizedAuto_BLUE extends OpMode {
                 break;
             case INTAKE4:
                 shoot = false;
-                followSlowIntakeWait(Intake2,1);
+                gateTimer.resetTimer();
+                followSlowIntakeWait(Intake4,1);
                 break;
             case SHOOT4:
                 shoot = true;
@@ -510,6 +518,7 @@ public class OrganizedAuto_BLUE extends OpMode {
         intakeTimer = new Timer();
         opmodeTimer = new Timer();
         correctionTimer = new Timer();
+        gateTimer = new Timer();
 
         // pathing
         follower = Constants.createFollower(hardwareMap);
