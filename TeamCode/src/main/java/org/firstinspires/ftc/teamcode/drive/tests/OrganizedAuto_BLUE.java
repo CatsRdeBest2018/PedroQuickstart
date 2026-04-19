@@ -35,12 +35,13 @@ public class OrganizedAuto_BLUE extends OpMode {
     private Timer shootTimer, correctionTimer, opmodeTimer, intakeTimer, gateTimer;
     Limelight3A limelight;
     private Follower follower;
+    private boolean isGate = false;
     private double currentRPM = 0;
     private boolean shoot = true;
 
     private double setupTime = 0.5;
     private double timeForShooting3 = 1.2;
-    private double timeForIntakingGate = 2;
+    private double timeForIntakingGate = 1.7;
 
     private final Pose startPose = mirrorRedToBlue(new Pose(115.446-1.8, 125.988, Math.toRadians(45))); //start pose
   //private final Pose startPose = new Pose(25.778, 125.988, Math.toRadians(45)); //start pose
@@ -162,7 +163,7 @@ public class OrganizedAuto_BLUE extends OpMode {
                 .addPath(
                         new BezierLine(
                                 mirrorRedToBlue(new Pose(126.089, 55.86)),
-                                mirrorRedToBlue(new Pose(127, 57.3))
+                                mirrorRedToBlue(new Pose(128, 58))
                         )
                 )
                 .setLinearHeadingInterpolation(-0.66, -0.66)
@@ -203,7 +204,7 @@ public class OrganizedAuto_BLUE extends OpMode {
                 .addPath(
                         new BezierLine(
                                 mirrorRedToBlue(new Pose(123, 61.9)),
-                                mirrorRedToBlue(new Pose(128, 57.3))
+                                mirrorRedToBlue(new Pose(129.5, 58.5))
                         )
                 )
                 .setLinearHeadingInterpolation(-0.66, -0.66)
@@ -361,8 +362,8 @@ public class OrganizedAuto_BLUE extends OpMode {
         }
     }
     public void WaitingForPath(){
-        if (pathState == PathState.SHOOT3 || pathState == PathState.SHOOT4){
-            if (!follower.isBusy() || gateTimer.getElapsedTimeSeconds() > 2.5){
+        if (isGate){
+            if (!follower.isBusy() || gateTimer.getElapsedTimeSeconds() > 2){
                 PathEnd();
             }
         }
@@ -380,7 +381,7 @@ public class OrganizedAuto_BLUE extends OpMode {
                 followSlowWait(Intake1Setup,1);
                 break;
             case INTAKE1:
-                followSlowIntakeWait(Intake1,0.7);
+                followSlowIntakeWait(Intake1,1);
                 break;
             case SHOOT2:
                 shoot = true;
@@ -392,14 +393,16 @@ public class OrganizedAuto_BLUE extends OpMode {
                 break;
             case INTAKE2SETUP2:
                 shoot = false;
-                followSlowWait(Intake2Setup2,0.7);
+                followSlowWait(Intake2Setup2,1);
                 break;
             case INTAKE2:
                 shoot = false;
                 gateTimer.resetTimer();
+                isGate = true;
                 followIntakeWait(Intake2);
                 break;
             case SHOOT3:
+                isGate = false;
                 shoot = true;
                 followIntakeWait(Shot3);
                 break;
@@ -414,10 +417,12 @@ public class OrganizedAuto_BLUE extends OpMode {
             case INTAKE4:
                 shoot = false;
                 gateTimer.resetTimer();
+                isGate = true;
                 followSlowIntakeWait(Intake4,1);
                 break;
             case SHOOT4:
                 shoot = true;
+                isGate = false;
                 followIntakeWait(Shot4);
                 break;
             case PARK:
@@ -492,6 +497,8 @@ public class OrganizedAuto_BLUE extends OpMode {
     }
     @Override
     public void loop() {
+
+      //  safetyChecks();
 
         if (shoot){
             Hood();

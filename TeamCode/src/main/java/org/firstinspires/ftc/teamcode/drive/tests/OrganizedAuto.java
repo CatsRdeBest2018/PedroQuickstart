@@ -34,6 +34,7 @@ public class OrganizedAuto extends OpMode {
     private Timer shootTimer, correctionTimer, opmodeTimer, intakeTimer, gateTimer;
     Limelight3A limelight;
     private Follower follower;
+    private boolean isGate = false;
     private double currentRPM = 0;
    private boolean shoot = true;
 
@@ -131,7 +132,7 @@ public class OrganizedAuto extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(126.089, 55.86),
-                                new Pose(127, 57.3)
+                                new Pose(128, 58)
                         )
                 )
                 .setLinearHeadingInterpolation(0.66, 0.66)
@@ -162,7 +163,7 @@ public class OrganizedAuto extends OpMode {
                         new BezierLine(
                                 new Pose(114, 81.914),
                                 new Pose(90.301, 82.336)
-                        )
+                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
@@ -181,7 +182,7 @@ public class OrganizedAuto extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(126.089, 55.86),
-                                new Pose(127.5, 57.3)
+                                new Pose(129, 58)
                         )
                 )
                 .setLinearHeadingInterpolation(0.66, 0.66)
@@ -342,8 +343,8 @@ public class OrganizedAuto extends OpMode {
         }
     }
     public void WaitingForPath(){
-        if (pathState == SHOOT3 || pathState == PathState.SHOOT4){
-            if (!follower.isBusy() || gateTimer.getElapsedTimeSeconds() > 2.5){
+        if (isGate){
+            if (!follower.isBusy() || gateTimer.getElapsedTimeSeconds() > 2){
                 PathEnd();
             }
         }
@@ -379,9 +380,11 @@ public class OrganizedAuto extends OpMode {
             case INTAKE2:
                 shoot = false;
                 gateTimer.resetTimer();
+                isGate = true;
                 followIntakeWait(Intake2);
                 break;
             case SHOOT3:
+                isGate = false;
                 shoot = true;
                 followIntakeWait(Shot3);
                 break;
@@ -396,10 +399,12 @@ public class OrganizedAuto extends OpMode {
             case INTAKE4:
                 shoot = false;
                 gateTimer.resetTimer();
+                isGate = true;
                 followSlowIntakeWait(Intake4,1);
                 break;
             case SHOOT4:
                 shoot = true;
+                isGate = false;
                 followIntakeWait(Shot4);
                 break;
             case PARK:
@@ -474,6 +479,7 @@ public class OrganizedAuto extends OpMode {
     }
     @Override
     public void loop() {
+     //   safetyChecks();
 
         if (shoot){
             Hood();
